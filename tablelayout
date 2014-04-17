@@ -1,0 +1,42 @@
+auction
+STATUS
+OPEN_TIME
+CLOSE_TIME
+ITEM_CATEGORY  ITEM_CATEGORY_ID
+ITEM_CAPTION
+ITEM_DESCRIPTION
+RESERVE
+ITEM_PHOTO
+AUCTION_ID
+SELLER   PERSON_ID
+
+person
+PERSON_ID int(11)
+NAME varchar(96 or 255 or 6)
+EMAIL_ADDRESS varchar(255)
+PASSWORD varchar(96) NOT NULL
+
+auction status
+0 paid and done
+1 open
+2 cancelled
+3 won
+4 failed
+
+item_category
+ITEM_CATEGORY_ID int(11)
+NAME varchar(78)
+
+bid
+BID_ID int(11)
+BIDDER int(11)   PERSON_ID
+AUCTION int(11)   AUCTION_ID
+BID_TIME_TIMESTAMP
+AMOUNT decimal(10,0)
+
+payment
+BID int(11)
+CREDIT_CARD int(16)
+AMOUNT decimal(10,0)
+PERSON_ID int(11)
+AUCTION_ID int(11)

@@ -1,0 +1,74 @@
+/*.navbar and .sitename use margin, border and padding*/
+/*the #confirmationform and #thekid are the two adjacent floated elements*/
+/*the change button occurs insise of the display form, and h1 within sitenames are treated specially*/
+
+.sitename {
+	height: 5em;
+	width: 40em;	
+	background-color: red;
+	margin: 2em 2em 2em 2em;
+	/*border-width:thin;*/
+	border:solid yellow;
+	/*border-color:yellow;*/
+	padding: .5em .5em .5em .5em;
+	position:static;
+}
+
+.sitename h1 {
+	position:relative;
+	text-align:center;
+}
+
+.navbar {
+	margin: 2em 1em 1em 3em;
+	border-width:thin;
+	padding: .1em .1em .1em .1em;
+	position:static;
+}
+
+button.link { background:none; }
+
+#displaytable {
+	margin: 3em 3em 3em 3em;
+}
+
+h4 {
+	position:relative;
+	color:#E67E00;
+	text-decoration:underline;
+	height:0em;
+}
+
+.displayform {
+	background-color:#FFE4B5;
+	margin: 1em 2em 2em 5em;
+	position:static;
+	width:24em;
+	border:solid red;
+}
+.displayform p {
+	font-size: 100%
+}
+#confirmationform {
+	margin: 1em 1em 1em 5em;
+	float:left;
+}
+
+div.longDescription {
+	display:none;
+}
+
+.changebutton {
+	float:right;
+}
+
+.loginform {
+	background-color:#FFE4B5;
+	width: 21em;
+	margin: 1em 2em 2em 5em;
+	border:solid black;
+}
+
+#thekid {
+	float:left;
+}
