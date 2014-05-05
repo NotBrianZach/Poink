@@ -1,5 +1,5 @@
 <?php
-require '/u/zach1/openZdatabase.php';
+require '/var/script/openZdatabase.php';
 session_start();
 $findsellerid = $database->prepare('
 	SELECT
@@ -84,7 +84,7 @@ $openAuctionQuery->closeCursor();
 			<input type="file" name="photo" value='<?=htmlspecialchars($currAuction['ITEM_PHOTO'])?>' accept="image/*"/> 
                 <p>Item Category:<?=htmlspecialchars($currAuction['ITEM_CATEGORY'])?></p>
 		<?php
-	      	    require '/u/zach1/openZdatabase.php';
+	      	    require '/var/script/openZdatabase.php';
 	      	    $categoriesQuery = $database->prepare('
 	      	      SELECT
 	      	    	ITEM_CATEGORY_ID,

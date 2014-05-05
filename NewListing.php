@@ -1,7 +1,7 @@
 <?php
 	ini_set('display_errors','On');
 	error_reporting(E_ALL);
-	require '/u/zach1/openZdatabase.php';
+	require '/var/script/openZdatabase.php';
 	session_start();
 	$findsellerid = $database->prepare('
 		SELECT
@@ -47,7 +47,7 @@
 			Describe your stuff!
 			</textarea>
 		<?php
-	      	    require '/u/zach1/openZdatabase.php';
+	      	    require '/var/script/openZdatabase.php';
 	      	    $categoriesQuery = $database->prepare('
 	      	      SELECT
 	      	    	ITEM_CATEGORY_ID,

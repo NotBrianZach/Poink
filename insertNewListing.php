@@ -1,5 +1,5 @@
 <?php
-require '/u/zach1/openZdatabase.php';
+require '/var/script/openZdatabase.php';
 session_start();
 $newIdQuery = $database->prepare('SELECT NEXT_SEQ_VALUE(:seqGenName);');
 $newIdQuery->bindValue(':seqGenName', 'AUCTION', PDO::PARAM_STR);

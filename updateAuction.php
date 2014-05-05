@@ -1,5 +1,5 @@
 <?php
-require '/u/zach1/openZdatabase.php';
+require '/var/script/openZdatabase.php';
 if(!isset($_FILES['photo'])){
   $updateAuctionStmt = $database->prepare('
           UPDATE AUCTION
