@@ -1,3 +1,4 @@
+use auction;
 -- auction-seq.sql -- SQL definitons for sequence generation
 -- Auction Web Application Project
 --

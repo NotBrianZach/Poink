@@ -2,7 +2,7 @@
 //need to add error checking
 //might want to check for zero length $photoContents, show placeholder image in that case
 //need to add php database query
-require '/var/script/openZdatabase.php';
+require '/var/scripts/openZdatabase.php';
 $openPhotoQuery = $database->prepare('
 	SELECT
 		A.ITEM_PHOTO

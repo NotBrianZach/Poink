@@ -1,19 +1,19 @@
 <?php
-require '/var/script/openZdatabase.php';
+require '/var/scripts/openZdatabase.php';
 if(!isset($_FILES['photo'])){
   $updateAuctionStmt = $database->prepare('
           UPDATE AUCTION
   		SET CLOSE_TIME = :close,
   		 ITEM_CATEGORY = :category,
   		 ITEM_CAPTION = :caption,
-  		 ITEM_DESCRIPTION = :description,
+  		 ITEM_DESCRIPTION = :descriptsion,
   		 RESERVE = :reserve
   	WHERE AUCTION_ID = :auctionid;
   	');
   $updateAuctionStmt->bindValue(':close',$_POST['enddate'], PDO::PARAM_STR);
   $updateAuctionStmt->bindValue(':category',$_POST['category'], PDO::PARAM_INT);
   $updateAuctionStmt->bindValue(':caption',$_POST['caption'], PDO::PARAM_STR);
-  $updateAuctionStmt->bindValue(':description',$_POST['description'], PDO::PARAM_STR);
+  $updateAuctionStmt->bindValue(':descriptsion',$_POST['descriptsion'], PDO::PARAM_STR);
   $updateAuctionStmt->bindValue(':reserve',$_POST['reserve'], PDO::PARAM_STR);
   $updateAuctionStmt->bindValue(':auctionid',$_GET['id'], PDO::PARAM_INT);
   $updateAuctionStmt->execute();
@@ -26,7 +26,7 @@ else{
   		 ITEM_PHOTO = :photo,
   		 ITEM_CATEGORY = :category,
   		 ITEM_CAPTION = :caption,
-  		 ITEM_DESCRIPTION = :description,
+  		 ITEM_DESCRIPTION = :descriptsion,
   		 RESERVE = :reserve
   	WHERE AUCTION_ID = :auctionid;
   	');
@@ -41,7 +41,7 @@ else{
   $updateAuctionStmt->bindValue(':close',$_POST['enddate'], PDO::PARAM_STR);
   $updateAuctionStmt->bindValue(':category',$_POST['category'], PDO::PARAM_INT);
   $updateAuctionStmt->bindValue(':caption',$_POST['caption'], PDO::PARAM_STR);
-  $updateAuctionStmt->bindValue(':description',$_POST['description'], PDO::PARAM_STR);
+  $updateAuctionStmt->bindValue(':descriptsion',$_POST['descriptsion'], PDO::PARAM_STR);
   $updateAuctionStmt->bindValue(':reserve',$_POST['reserve'], PDO::PARAM_STR);
   $updateAuctionStmt->bindValue(':auctionid',$_GET['id'], PDO::PARAM_INT);
   $updateAuctionStmt->execute();

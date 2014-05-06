@@ -4,7 +4,7 @@ if (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== "on") { //not sure if I n
     echo "why you no use https? is you a dummy?";
     exit(1);
 }
-require '/var/script/openZdatabase.php';
+require '/var/scripts/openZdatabase.php';
 session_destroy();
 ?>
 <!DOCTYPE html>

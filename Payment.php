@@ -1,5 +1,5 @@
 <?php
-require '/var/script/openZdatabase.php';
+require '/var/scripts/openZdatabase.php';
 session_start();
 $finduserid = $database->prepare('
 	SELECT

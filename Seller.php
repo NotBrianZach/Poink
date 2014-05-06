@@ -1,5 +1,5 @@
 <?php
-require '/var/script/openZdatabase.php';
+require '/var/scripts/openZdatabase.php';
 session_start();
 $findsellerid = $database->prepare('
 	SELECT
@@ -42,13 +42,13 @@ $openAuctionQuery->closeCursor();
     <title>Home</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" type="text/css" href="mystyle.css"/>
-    <script language="javascript" type="text/javascript" src="datetimepicker.js">
+    <scripts language="javascripts" type="text/javascripts" src="datetimepicker.js">
     
-    //Date Time Picker script- by TengYong Ng of http://www.rainforestnet.com
-    //Script featured on JavaScript Kit (http://www.javascriptkit.com)
-    //For this script, visit http://www.javascriptkit.com 
+    //Date Time Picker scripts- by TengYong Ng of http://www.rainforestnet.com
+    //Script featured on JavaScript Kit (http://www.javascriptskit.com)
+    //For this scripts, visit http://www.javascriptskit.com 
     
-    </script>
+    </scripts>
   </head>
     <body> 
         <div id="header" class="sitename">
@@ -84,7 +84,7 @@ $openAuctionQuery->closeCursor();
 			<input type="file" name="photo" value='<?=htmlspecialchars($currAuction['ITEM_PHOTO'])?>' accept="image/*"/> 
                 <p>Item Category:<?=htmlspecialchars($currAuction['ITEM_CATEGORY'])?></p>
 		<?php
-	      	    require '/var/script/openZdatabase.php';
+	      	    require '/var/scripts/openZdatabase.php';
 	      	    $categoriesQuery = $database->prepare('
 	      	      SELECT
 	      	    	ITEM_CATEGORY_ID,
@@ -105,8 +105,8 @@ $openAuctionQuery->closeCursor();
 	      	    endforeach;
 	      	?>
 		</select>
-                <p>Description:</p>
-			<textarea name="description" rows="8" columns="30"/>
+                <p>Descriptsion:</p>
+			<textarea name="descriptsion" rows="8" columns="30"/>
 			<?=htmlspecialchars($currAuction['ITEM_DESCRIPTION'])?>
 			</textarea>
                 <p>Minimum Bid:</p>
@@ -114,7 +114,7 @@ $openAuctionQuery->closeCursor();
                 <p>Bidding Ends:</p>
 		<input id="demo1<?=htmlspecialchars($currAuction['AUCTION_ID'])?>" type="text" size="25" name="enddate" 
 		value="<?=htmlspecialchars($currAuction['CLOSE_TIME'])?>">
-		<a href="javascript:NewCal('demo1<?=htmlspecialchars($currAuction['AUCTION_ID'])?>','ddmmyyyy',true,24)">
+		<a href="javascripts:NewCal('demo1<?=htmlspecialchars($currAuction['AUCTION_ID'])?>','ddmmyyyy',true,24)">
 		<img src="cal.gif" width="16" height="16" border="0" alt="Pick a date"></a>
                 <p>Current Bid:<?=htmlspecialchars($currAuction['AMOUNT'])?></p>
 		<br/>
@@ -145,7 +145,7 @@ $openAuctionQuery->closeCursor();
 		<h3><?=htmlspecialchars($currAuction['ITEM_CAPTION'])?></h3>
             	<img src="showPhoto.php?id=<?=htmlspecialchars($currAuction['AUCTION_ID'])?>" alt="Photo failed to display" height="100" width="100"/>
 		<p>Item Category:<?=htmlspecialchars($currAuction['ITEM_CATEGORY'])?></p>
-		<p>Description:<?=htmlspecialchars($currAuction['ITEM_DESCRIPTION'])?></p>
+		<p>Descriptsion:<?=htmlspecialchars($currAuction['ITEM_DESCRIPTION'])?></p>
 		<p>Minimum Bid:<?=htmlspecialchars($currAuction['RESERVE'])?></p>
                 <p>Winning Bid:<?=htmlspecialchars($currAuction['AMOUNT'])?></p>
 		<p>Sale date:<?=htmlspecialchars($currAuction['CLOSE_TIME'])?></p>
@@ -154,6 +154,6 @@ $openAuctionQuery->closeCursor();
                 endforeach;
             ?>
         </div>
-    <script src="validateForm.js" type="text/javascript"></script>
+    <scripts src="validateForm.js" type="text/javascripts"></scripts>
     </body>
 </html>

@@ -3,7 +3,7 @@
 	error_reporting(E_ALL);
 ?>
 <?php
-require '/var/script/openZdatabase.php';
+require '/var/scripts/openZdatabase.php';
 session_start();
 
 $finduserid = $database->prepare('
@@ -74,12 +74,12 @@ $openAuctionQuery->closeCursor();
 	    ?>
 		<div id="auction<?=htmlspecialchars($currAuction['AUCTION_ID'])?>">
 		  <h3><?=htmlspecialchars($currAuction['ITEM_CAPTION'])?></h3>
-		  <button class="link" id="descButton<?=htmlspecialchars($currAuction['AUCTION_ID'])?>" onclick="switchDescription(<?=htmlspecialchars($currAuction['AUCTION_ID'])?>);">click to expand description</button> 
+		  <button class="link" id="descButton<?=htmlspecialchars($currAuction['AUCTION_ID'])?>" onclick="switchDescriptsion(<?=htmlspecialchars($currAuction['AUCTION_ID'])?>);">click to expand descriptsion</button> 
 		  <br/>
             	  <img src="showPhoto.php?id=<?=htmlspecialchars($currAuction['AUCTION_ID'])?>" alt="Photo failed to display" height="100" width="100"/>
-		  <div class="longDescription" id="longDescription<?=htmlspecialchars($currAuction['AUCTION_ID'])?>">
+		  <div class="longDescriptsion" id="longDescriptsion<?=htmlspecialchars($currAuction['AUCTION_ID'])?>">
 		    <p>Item Category:<?=htmlspecialchars($currAuction['ITEM_CATEGORY'])?></p>
-		    <p>Description:<?=htmlspecialchars($currAuction['ITEM_DESCRIPTION'])?></p>
+		    <p>Descriptsion:<?=htmlspecialchars($currAuction['ITEM_DESCRIPTION'])?></p>
 		    <p>Seller:<?=htmlspecialchars($currAuction['SELLER'])?></p>
 		    <p>Minimum Bid:<span id="minBid<?=htmlspecialchars($currAuction['AUCTION_ID'])?>"><?=htmlspecialchars($currAuction['RESERVE'])?></span></p>
                     <p>Current Bid:<?=htmlspecialchars($currAuction['AMOUNT'])?></p>
@@ -87,7 +87,7 @@ $openAuctionQuery->closeCursor();
            	    <form method="post" onsubmit="return bidValidate(<?=htmlspecialchars($currAuction['AUCTION_ID'])?>);"
 			 action="updateBid.php?id=<?=htmlspecialchars($currAuction['AUCTION_ID'])?>"> 
 		    <input type="text" value="Enter a bid" name="bid" id="aBid<?=htmlspecialchars($currAuction['AUCTION_ID'])?>"/>
-		    <!--had to include the auction id in the bid to differentiate between id elements for javascript validation to work.-->
+		    <!--had to include the auction id in the bid to differentiate between id elements for javascripts validation to work.-->
 		    <input type="submit"/>
 		    </form>
 		  </div>
@@ -113,12 +113,12 @@ $openAuctionQuery->closeCursor();
 			if ($currAuction['STATUS'] == 3 && $userId == $currAuction['BIDDER'])://will need to grab auction id's from payments and then compare
 	    ?>
 		<h3><?=htmlspecialchars($currAuction['ITEM_CAPTION'])?><h3>
-		<button class="link" id="boughtDescButton<?=htmlspecialchars($currAuction['AUCTION_ID'])?>" onclick="switchBoughtDescription(<?=htmlspecialchars($currAuction['AUCTION_ID'])?>);">click to expand item description</button> 
+		<button class="link" id="boughtDescButton<?=htmlspecialchars($currAuction['AUCTION_ID'])?>" onclick="switchBoughtDescriptsion(<?=htmlspecialchars($currAuction['AUCTION_ID'])?>);">click to expand item descriptsion</button> 
 		<br/>
             	<img src="showPhoto.php?id=<?=htmlspecialchars($currAuction['AUCTION_ID'])?>" alt="Photo failed to display" height="100" width="100"/>
-		<div class="longDescription" id="boughtDescription<?=htmlspecialchars($currAuction['AUCTION_ID'])?>">
+		<div class="longDescriptsion" id="boughtDescriptsion<?=htmlspecialchars($currAuction['AUCTION_ID'])?>">
 		<p>Item Category:<?=htmlspecialchars($currAuction['ITEM_CATEGORY'])?></p>
-		<p>Description:<?=htmlspecialchars($currAuction['ITEM_DESCRIPTION'])?></p>
+		<p>Descriptsion:<?=htmlspecialchars($currAuction['ITEM_DESCRIPTION'])?></p>
 		<p>Seller:<?=htmlspecialchars($currAuction['SELLER'])?></p>
                 <p>Winning Bid:<?=htmlspecialchars($currAuction['AMOUNT'])?></p>
            	<form method="post" action="Payment.php?id=<?=htmlspecialchars($currAuction['AUCTION_ID'])?>"> 
@@ -131,6 +131,6 @@ $openAuctionQuery->closeCursor();
 		endforeach;
 	    ?>
         </div>
-    <script src="validateForm.js" type="text/javascript"></script>
+    <scripts src="validateForm.js" type="text/javascripts"></scripts>
     </body>
 </html>

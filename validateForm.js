@@ -27,28 +27,28 @@ function bidValidate(auctionId){
   return true;
 }
 
-function switchDescription(auctionId){
-  var description = document.getElementById("longDescription"+auctionId).style;
+function switchDescriptsion(auctionId){
+  var descriptsion = document.getElementById("longDescriptsion"+auctionId).style;
   var button = document.getElementById("descButton"+auctionId);
-  if (description.display=="none"){
-    description.display="inline";
-    button.innerHTML="click to shrink description";
+  if (descriptsion.display=="none"){
+    descriptsion.display="inline";
+    button.innerHTML="click to shrink descriptsion";
   }
   else{ 
-    description.display="none"; 
-    button.innerHTML="click to expand description";
+    descriptsion.display="none"; 
+    button.innerHTML="click to expand descriptsion";
   }
 }
 
-function switchBoughtDescription(auctionId){
-  var description = document.getElementById("boughtDescription"+auctionId).style;
+function switchBoughtDescriptsion(auctionId){
+  var descriptsion = document.getElementById("boughtDescriptsion"+auctionId).style;
   var button = document.getElementById("boughtDescButton"+auctionId);
-  if (description.display=="none"){
-    description.display="inline";
-    button.innerHTML="click to shrink description";
+  if (descriptsion.display=="none"){
+    descriptsion.display="inline";
+    button.innerHTML="click to shrink descriptsion";
   }
   else{ 
-    description.display="none"; 
-    button.innerHTML="click to expand description";
+    descriptsion.display="none"; 
+    button.innerHTML="click to expand descriptsion";
   }
 }

@@ -1,7 +1,7 @@
 <?php
 	ini_set('display_errors','On');
 	error_reporting(E_ALL);
-	require '/var/script/openZdatabase.php';
+	require '/var/scripts/openZdatabase.php';
 	session_start();
 	$findsellerid = $database->prepare('
 		SELECT
@@ -19,13 +19,13 @@
     <title>NewListing</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" type="text/css" href="mystyle.css"/>
-    <script type="text/javascript" src="datetimepicker.js">
+    <scripts type="text/javascripts" src="datetimepicker.js">
     
-    //Date Time Picker script- by TengYong Ng of http://www.rainforestnet.com
-    //Script featured on JavaScript Kit (http://www.javascriptkit.com)
-    //For this script, visit http://www.javascriptkit.com 
+    //Date Time Picker scripts- by TengYong Ng of http://www.rainforestnet.com
+    //Script featured on JavaScript Kit (http://www.javascriptskit.com)
+    //For this scripts, visit http://www.javascriptskit.com 
     
-    </script>
+    </scripts>
 </head>
     <body> 
         <div class="sitename">
@@ -42,12 +42,12 @@
             <form action="insertNewListing.php?id=<?=$sellerId?>" method="post" enctype="multipart/form-data" onsubmit="return minBidValidate();">
 		<p>Item Name</p>
 		<input type="text" value="Item Name" name="caption"/>
-		<p>Item Description</p>
-			<textarea name="description" rows="8" columns="30"/>
+		<p>Item Descriptsion</p>
+			<textarea name="descriptsion" rows="8" columns="30"/>
 			Describe your stuff!
 			</textarea>
 		<?php
-	      	    require '/var/script/openZdatabase.php';
+	      	    require '/var/scripts/openZdatabase.php';
 	      	    $categoriesQuery = $database->prepare('
 	      	      SELECT
 	      	    	ITEM_CATEGORY_ID,
@@ -70,8 +70,8 @@
 	      	?>
 	      	</select>
 	      	<p>Auction End Date (military time, UTC -6:00)</p>
-		<input id="demo1" type="text" name="enddate" value="yyyy-mm-dd hh:mm:ss" size="25"><a href="javascript:NewCal('demo1','ddmmyyyy',true,24)"><img src="cal.gif" width="16" height="16" border="0" alt="Pick a date"></a>
-		<!--courtesy of http://www.javascriptkit.com/script/script2/tengcalendar.shtml-->
+		<input id="demo1" type="text" name="enddate" value="yyyy-mm-dd hh:mm:ss" size="25"><a href="javascripts:NewCal('demo1','ddmmyyyy',true,24)"><img src="cal.gif" width="16" height="16" border="0" alt="Pick a date"></a>
+		<!--courtesy of http://www.javascriptskit.com/scripts/scripts2/tengcalendar.shtml-->
 		<p>Minimum Bid</p>
               	<input id="minBid" type="text" value="Minimum Bid" name="reserve"/>
 	 	<h3>Find a nice picture of your stuff:</h3>
@@ -79,6 +79,6 @@
              	<input type="submit">
 	    </form>
         </div>
-    <script src="validateForm.js" type="text/javascript"></script>
+    <scripts src="validateForm.js" type="text/javascripts"></scripts>
     </body>
 </html>
