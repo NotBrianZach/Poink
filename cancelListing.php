@@ -1,5 +1,5 @@
 <?php
-require '/var/scripts/openZdatabase.php';
+require '/var/script/openZdatabase.php';
 $cancelQuery = $database->prepare('
 	DELETE 
 		FROM AUCTION

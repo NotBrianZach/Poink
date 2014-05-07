@@ -1,4 +1,4 @@
-//Javascripts name: My Date Time Picker
+//Javascript name: My Date Time Picker
 //Date created: 16-Nov-2003 23:19
 //Scripter: TengYong Ng
 //Website: http://www.rainforestnet.com
@@ -6,7 +6,7 @@
 //FileName: DateTimePicker.js
 //Version: 0.8
 //Contact: contact@rainforestnet.com
-// Note: Permission given to use this scripts in ANY kind of applications if
+// Note: Permission given to use this script in ANY kind of applications if
 //       header lines are left unchanged.
 
 //Global variables
@@ -136,13 +136,13 @@ function RenderCal()
 
 	docCal.open();
 	docCal.writeln("<html><head><title>"+WindowTitle+"</title>");
-	docCal.writeln("<scripts>var winMain=window.opener;</scripts>");
+	docCal.writeln("<script>var winMain=window.opener;</script>");
 	docCal.writeln("</head><body background='"+ThemeBg+"' link="+FontColor+" vlink="+FontColor+"><form name='Calendar'>");
 
 	vCalHeader="<table border=1 cellpadding=1 cellspacing=1 width='100%' align=\"center\" valign=\"top\">\n";
 	//Month Selector
 	vCalHeader+="<tr>\n<td colspan='7'><table border=0 width='100%' cellpadding=0 cellspacing=0><tr><td align='left'>\n";
-	vCalHeader+="<select name=\"MonthSelector\" onChange=\"javascripts:winMain.Cal.SwitchMth(this.selectedIndex);winMain.RenderCal();\">\n";
+	vCalHeader+="<select name=\"MonthSelector\" onChange=\"javascript:winMain.Cal.SwitchMth(this.selectedIndex);winMain.RenderCal();\">\n";
 	for (i=0;i<12;i++)
 	{
 		if (i==Cal.Month)
@@ -153,7 +153,7 @@ function RenderCal()
 	}
 	vCalHeader+="</select></td>";
 	//Year selector
-	vCalHeader+="\n<td align='right'><a href=\"javascripts:winMain.Cal.DecYear();winMain.RenderCal()\"><b><font color=\""+YrSelColor+"\"><</font></b></a><font face=\"Verdana\" color=\""+YrSelColor+"\" size=2><b> "+Cal.Year+" </b></font><a href=\"javascripts:winMain.Cal.IncYear();winMain.RenderCal()\"><b><font color=\""+YrSelColor+"\">></font></b></a></td></tr></table></td>\n";	
+	vCalHeader+="\n<td align='right'><a href=\"javascript:winMain.Cal.DecYear();winMain.RenderCal()\"><b><font color=\""+YrSelColor+"\"><</font></b></a><font face=\"Verdana\" color=\""+YrSelColor+"\" size=2><b> "+Cal.Year+" </b></font><a href=\"javascript:winMain.Cal.IncYear();winMain.RenderCal()\"><b><font color=\""+YrSelColor+"\">></font></b></a></td></tr></table></td>\n";	
 	vCalHeader+="</tr>";
 	//Calendar header shows Month and Year
 	if (ShowMonthYear)
@@ -213,17 +213,17 @@ function RenderCal()
 		var showHour;
 		showHour=Cal.getShowHour();		
 		vCalTime="<tr>\n<td colspan='7' align='center'>";
-		vCalTime+="<input type='text' name='hour' maxlength=2 size=1 style=\"WIDTH: 22px\" value="+showHour+" onchange=\"javascripts:winMain.Cal.SetHour(this.value)\">";
+		vCalTime+="<input type='text' name='hour' maxlength=2 size=1 style=\"WIDTH: 22px\" value="+showHour+" onchange=\"javascript:winMain.Cal.SetHour(this.value)\">";
 		vCalTime+=" : ";
-		vCalTime+="<input type='text' name='minute' maxlength=2 size=1 style=\"WIDTH: 22px\" value="+Cal.Minutes+" onchange=\"javascripts:winMain.Cal.SetMinute(this.value)\">";
+		vCalTime+="<input type='text' name='minute' maxlength=2 size=1 style=\"WIDTH: 22px\" value="+Cal.Minutes+" onchange=\"javascript:winMain.Cal.SetMinute(this.value)\">";
 		vCalTime+=" : ";
-		vCalTime+="<input type='text' name='second' maxlength=2 size=1 style=\"WIDTH: 22px\" value="+Cal.Seconds+" onchange=\"javascripts:winMain.Cal.SetSecond(this.value)\">";
+		vCalTime+="<input type='text' name='second' maxlength=2 size=1 style=\"WIDTH: 22px\" value="+Cal.Seconds+" onchange=\"javascript:winMain.Cal.SetSecond(this.value)\">";
 		if (TimeMode==12)
 		{
 			var SelectAm =(parseInt(Cal.Hours,10)<12)? "Selected":"";
 			var SelectPm =(parseInt(Cal.Hours,10)>=12)? "Selected":"";
 
-			vCalTime+="<select name=\"ampm\" onchange=\"javascripts:winMain.Cal.SetAmPm(this.options[this.selectedIndex].value);\">";
+			vCalTime+="<select name=\"ampm\" onchange=\"javascript:winMain.Cal.SetAmPm(this.options[this.selectedIndex].value);\">";
 			vCalTime+="<option "+SelectAm+" value=\"AM\">AM</option>";
 			vCalTime+="<option "+SelectPm+" value=\"PM\">PM<option>";
 			vCalTime+="</select>";
@@ -268,7 +268,7 @@ function GenCell(pValue,pHighLight,pColor)//Generate table cell with value
 	}	
 	else
 		vTimeStr="";		
-	PCellStr="<td "+vColor+" width="+CellWidth+" align='center'><font face='verdana' size='2'"+vHLstr1+"<a href=\"javascripts:winMain.document.getElementById('"+Cal.Ctrl+"').value='"+Cal.FormatDate(PValue)+"';"+vTimeStr+";window.close();\">"+PValue+"</a>"+vHLstr2+"</font></td>";
+	PCellStr="<td "+vColor+" width="+CellWidth+" align='center'><font face='verdana' size='2'"+vHLstr1+"<a href=\"javascript:winMain.document.getElementById('"+Cal.Ctrl+"').value='"+Cal.FormatDate(PValue)+"';"+vTimeStr+";window.close();\">"+PValue+"</a>"+vHLstr2+"</font></td>";
 	return PCellStr;
 }
 

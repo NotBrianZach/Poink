@@ -1,5 +1,5 @@
 <?php
-require '/var/scripts/openZdatabase.php';
+require '/var/script/openZdatabase.php';
 $updateAuctionStmt = $database->prepare('
     UPDATE AUCTION 
         SET STATUS = 4

@@ -1,6 +1,6 @@
 <?php
 //new bid id 
-require '/var/scripts/openZdatabase.php';
+require '/var/script/openZdatabase.php';
 session_start();
 $finduserid = $database->prepare('
 	SELECT
