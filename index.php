@@ -8,13 +8,15 @@
     <body> 
         <div id="header" class="sitename">
             <h1>
-            Welcome to BuySellBuyBuy!
+            Welcome to Poink, the Website
             </h1>
         </div>
-        <div id="navbar" class="navbar">
-            <a href="Login.php">[Log in]</a>
-            <a href="TermsAndConditions.php">[Register]</a>
-        </div>
+        <ul id="nav">
+            <li><a href="Login.php">Login</a></li>
+            <li><a href="TermsAndConditions.php">Register</a></li>
+            <li><a href="AboutPoink.php">About Poink</a></li>
+            <li><a href="HowAdsWork.php">How Ads Work</a></li>
+        </ul>
         <div id="displaytable">
             <table>
                 <tr>

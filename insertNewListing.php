@@ -46,7 +46,7 @@ $insertAuctionStmt->closeCursor();
         <div id="confirmationform">
             <p>New Listing Uploaded.</p>
             <form>
-                <a href="Seller.php">[Back to Sellin']</a>
+                <a href="YourAccount.php">[Back to Sellin']</a>
             </form>
         </div>
 	<div id="thekid">

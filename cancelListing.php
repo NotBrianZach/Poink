@@ -27,7 +27,7 @@ $cancelQuery->closeCursor();
         </div>
         <div id="confirmationform">
             <p>Confirmed: Listing Canceled.</p>
-            <a href="Seller.php">[Back To Sellin']</a>
+            <a href="YourAccount.php">[Back To Sellin']</a>
         </div>
 	<div id="thekid">
 		<img src="kid.jpg" alt="Image not found"/>

@@ -15,12 +15,12 @@ if (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== "on") {
     <body> 
         <div id="header" class="sitename">
             <h1>
-            BuySellBuyBuy! Log in Log in Log in!
+		Login
             </h1>
         </div>
         <div class="loginform">
             <form method="post" action="confirmLogin.php">
-                <p>Username:</p> <input type="text" name="user"/>
+                <p>Account Name:</p> <input type="text" name="user"/>
                 <p>Password:</p> <input type="password" name="password"/>
 		<p></p>
 		<input type="submit"/>	

@@ -55,7 +55,7 @@ $openAuctionQuery->closeCursor();
         <div class="navbar">
 	    Welcome, <?=htmlspecialchars($_SESSION['user'])?>
             <a href="index.php">[Log out]</a>
-            <a href="Seller.php">[Sellin' Shack]</a>
+            <a href="YourAccount.php">[Sellin' Shack]</a>
         </div>
         <div id="browseoptions" class="displayform">
 	    <h4>Browse the Goods</h4>
@@ -64,7 +64,7 @@ $openAuctionQuery->closeCursor();
             <select name="sort by">
             <option value="most recent">most recent</option>
             <option value="by category">by Category</option>
-            <option value="by seller">by Seller</option>
+            <option value="by seller">by Your Account</option>
             </select>
             </form>
 	    <form><button type="button">Search</button></form>
@@ -80,7 +80,7 @@ $openAuctionQuery->closeCursor();
 		  <div class="longDescription" id="longDescription<?=htmlspecialchars($currAuction['AUCTION_ID'])?>">
 		    <p>Item Category:<?=htmlspecialchars($currAuction['ITEM_CATEGORY'])?></p>
 		    <p>Description:<?=htmlspecialchars($currAuction['ITEM_DESCRIPTION'])?></p>
-		    <p>Seller:<?=htmlspecialchars($currAuction['SELLER'])?></p>
+		    <p>Your Account:<?=htmlspecialchars($currAuction['SELLER'])?></p>
 		    <p>Minimum Bid:<span id="minBid<?=htmlspecialchars($currAuction['AUCTION_ID'])?>"><?=htmlspecialchars($currAuction['RESERVE'])?></span></p>
                     <p>Current Bid:<?=htmlspecialchars($currAuction['AMOUNT'])?></p>
                     <p>Auction ends:<?=htmlspecialchars($currAuction['CLOSE_TIME'])?></p>
@@ -104,7 +104,7 @@ $openAuctionQuery->closeCursor();
             <select name="sort by">
             <option value="most recent">most recent</option>
             <option value="by category">by Category</option>
-            <option value="by seller">by Seller</option>
+            <option value="by seller">by Your Account</option>
             </select>
             </form>
 	    <form><button type="button">Search</button></form>
@@ -119,7 +119,7 @@ $openAuctionQuery->closeCursor();
 		<div class="longDescription" id="boughtDescription<?=htmlspecialchars($currAuction['AUCTION_ID'])?>">
 		<p>Item Category:<?=htmlspecialchars($currAuction['ITEM_CATEGORY'])?></p>
 		<p>Description:<?=htmlspecialchars($currAuction['ITEM_DESCRIPTION'])?></p>
-		<p>Seller:<?=htmlspecialchars($currAuction['SELLER'])?></p>
+		<p>Your Account:<?=htmlspecialchars($currAuction['SELLER'])?></p>
                 <p>Winning Bid:<?=htmlspecialchars($currAuction['AMOUNT'])?></p>
            	<form method="post" action="Payment.php?id=<?=htmlspecialchars($currAuction['AUCTION_ID'])?>"> 
 		<input type="submit" value="Pay for purchase"/>

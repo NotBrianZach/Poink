@@ -42,7 +42,7 @@ $openAuctionQuery->closeCursor();
         <div class="navbar">
             <a href="index.php">[Log out]</a>
             <a href="Buyer.php">[Buyin' Bucket]</a>
-            <a href="Seller.php">[Sellin' Shack]</a>
+            <a href="YourAccount.php">[Sellin' Shack]</a>
         </div>
         <div id="browse" class="displayform">
 	    <h3><?=htmlspecialchars($currAuction['ITEM_CAPTION'])?></h3>

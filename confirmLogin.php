@@ -42,7 +42,7 @@ $_SESSION['user']=$_POST['user'];
         </div>
         <div id="confirmationform">
             <p>Login Complete.</p>
-            <form method="post" action="Seller.php">
+            <form method="post" action="YourAccount.php">
 		<input type="submit" value="Start Sellin"/>
             </form>
         </div>

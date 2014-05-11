@@ -30,7 +30,7 @@
         </div>
         <div class="navbar">
             <a href="index.php">[Logout]</a>
-            <a href="Seller.php">[Sellin' Shack]</a>
+            <a href="YourAccount.php">[Sellin' Shack]</a>
             <a href="Buyer.php">[Buyin' Bucket]</a>
         </div>
         <div id="newlistingform" class="displayform">

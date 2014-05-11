@@ -15,16 +15,20 @@ if (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== "on") {
     <body> 
         <div id="header" class="sitename">
             <h1>
-            BuySellBuyBuy! The Registration Form!
+            Advertister Registration
             </h1>
         </div>
         <div id="registrationform" class="loginform">
             <form method="post" action="insertRegistration.php">
-                <p>Username:</p> <input type="text" name="user"/>
+                <p>Poink Account name:</p> <input type="text" name=""/>
+                <p>Company name:</p> <input type="text" name="user"/>
                 <p>E-mail:</p> <input type="text" name="email"/>
+                <p>Billing Address:</p> <input type="text" name=""/>
+                <p>Phone:</p> <input type="text" name=""/>
                 <p>Password:</p> <input type="password" name="password"/>
+                <p>Confirm Password:</p> <input type="password" name="confirmpassword"/>
 		<input type="submit"/>
-		<p></p>
+		<br/>
             </form>
         </div>
     </body>

@@ -66,7 +66,7 @@ else{
         <div id="confirmationform">
             <p>Updated.</p>
             <form>
-                <a href="Seller.php">[Back to Sellin' stuff.]</a>
+                <a href="YourAccount.php">[Back to Sellin' stuff.]</a>
             </form>
         </div>
 	<div id="thekid">
