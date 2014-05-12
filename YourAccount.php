@@ -1,6 +1,25 @@
 <?php
 require '/var/script/openZdatabase.php';
+require 'password.php';
+
+$passwordQuery = $database->prepare('
+    SELECT 
+        PASSWORD
+    FROM PERSON 
+    WHERE PERSON.NAME = :name;
+');
+$passwordQuery->bindValue(':name', $_POST['user'], PDO::PARAM_STR);  
+$passwordQuery->execute();
+$passwordHash = $passwordQuery->fetchColumn(0);
+$passwordQuery->closeCursor();
+if (!password_verify($_POST['password'],$passwordHash))
+{
+    echo 'Password does not match.';
+    exit(1);
+}
 session_start();
+session_regenerate_id(true);
+$_SESSION['user']=$_POST['user'];
 $findsellerid = $database->prepare('
 	SELECT
 	    PERSON_ID
@@ -44,6 +63,21 @@ $openAuctionQuery->closeCursor();
     <link rel="stylesheet" type="text/css" href="mystyle.css"/>
     <script language="javascript" type="text/javascript" src="datetimepicker.js">
     </script>
+<!--GOOGLE MAPS API in use here-->
+    <script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjIbU3ukNmqzu9tJGhPLBRbQwBdzQ4ScM&libraries=geometry&sensor=false">
+    </script>
+    <script type="text/javascript">
+      function initialize() {
+        var mapOptions = {
+          center: new google.maps.LatLng(30.25, 97.75),
+          zoom: 0
+        };
+        var map = new google.maps.Map(document.getElementById("map-canvas"),
+            mapOptions);
+      }
+      google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
   </head>
     <body> 
         <div id="header" class="sitename">
@@ -85,6 +119,8 @@ $openAuctionQuery->closeCursor();
 		<p>Bid on ad price in dollars</p>
 		  <input type="text" value=".05"/>
 	        <input type="submit"/>
+		<p>Target Region</p>
+		<div id="map-canvas"></div>
 	    </form>
         </div>
         <!--<div class="displayform">
