@@ -1,12 +1,12 @@
 <?php
 require '/var/script/openZdatabase.php';
 require 'password.php';
-
+/*
 $passwordQuery = $database->prepare('
     SELECT 
         PASSWORD
-    FROM PERSON 
-    WHERE PERSON.NAME = :name;
+    FROM COMPANIES 
+    WHERE COMPANIES.ACCOUNT_NAME = :name;
 ');
 $passwordQuery->bindValue(':name', $_POST['user'], PDO::PARAM_STR);  
 $passwordQuery->execute();
@@ -17,42 +17,49 @@ if (!password_verify($_POST['password'],$passwordHash))
     echo 'Password does not match.';
     exit(1);
 }
+*/
 session_start();
 session_regenerate_id(true);
 $_SESSION['user']=$_POST['user'];
-$findsellerid = $database->prepare('
+$findCompanyid = $database->prepare('
 	SELECT
-	    PERSON_ID
-	FROM PERSON WHERE NAME=:name;
+	    COMPANY_ID
+	FROM COMPANIES WHERE ACCOUNT_NAME=:name;
     ');
-$findsellerid->bindValue(':name',$_SESSION['user']);
-$findsellerid->execute();
-$sellerId = $findsellerid->fetchColumn(0);
-$findsellerid->closeCursor();
+$findCompanyid->bindValue(':name',$_SESSION['user']);
+$findCompanyid->execute();
+$companyId = $findCompanyid->fetchColumn(0);
+$findCompanyid->closeCursor();
 
-$openAuctionQuery = $database->prepare('
+
+$newQuestionIdQuery = $database->prepare('
+	SELECT NEXT_SEQ_VALUE(:seqGenName);
+	');
+$newQuestionIdQuery->bindValue(':seqGenName', 'QUESTIONS', PDO::PARAM_STR);
+$newQuestionIdQuery->execute();
+$newQuestionId = $newQuestionIdQuery ->fetchColumn(0);
+$newQuestionIdQuery->closeCursor();
+
+$openQuestionQuery = $database->prepare('
     SELECT
-        A.STATUS,
-	A.AUCTION_ID,
-        PERSON.NAME AS SELLER,
-        A.OPEN_TIME,
-        A.CLOSE_TIME,
-        ITEM_CATEGORY.NAME AS ITEM_CATEGORY,
-        A.ITEM_CAPTION,
-        A.ITEM_DESCRIPTION,
-	A.RESERVE,
-	BID.AMOUNT
-        FROM AUCTION A
-            JOIN ITEM_CATEGORY ON A.ITEM_CATEGORY = ITEM_CATEGORY.ITEM_CATEGORY_ID
-            JOIN PERSON ON A.SELLER = PERSON.PERSON_ID
-	    LEFT JOIN BID ON BID.AUCTION = A.AUCTION_ID 
-	    AND BID.AMOUNT = (SELECT(MAX(BID.AMOUNT)) FROM BID WHERE BID.AUCTION = A.AUCTION_ID)
-	WHERE A.SELLER = :sellerId;
+        Q.QUESTION_ID,
+	Q.QUESTION,
+        Q.MIN_AGE,
+        Q.MAX_AGE,
+        Q.BUDGET,
+        Q.BID,
+	Q.TARGET_GENDERS,
+	QUESTION_COORDS.LAT,
+	QUESTION_COORDS.LNG,
+	QUESTION_COORDS.RADIUS
+        FROM QUESTIONS Q
+	    LEFT JOIN QUESTION_COORDS ON QUESTION_COORDS.QUESTION_ID = Q.QUESTION_ID 
+	WHERE Q.COMPANY_ID = :companyId;
     ');
-$openAuctionQuery->bindValue(':sellerId', $sellerId, PDO::PARAM_INT);
-$openAuctionQuery->execute();
-$stuffSellin = $openAuctionQuery->fetchAll();
-$openAuctionQuery->closeCursor();
+$openQuestionQuery->bindValue(':companyId', $companyId, PDO::PARAM_INT);
+$openQuestionQuery->execute();
+$yourQuestions = $openQuestionQuery->fetchAll();
+$openQuestionQuery->closeCursor();
 ?>
 
 <!DOCTYPE html>
@@ -63,26 +70,96 @@ $openAuctionQuery->closeCursor();
     <link rel="stylesheet" type="text/css" href="mystyle.css"/>
     <script language="javascript" type="text/javascript" src="datetimepicker.js">
     </script>
-<!--GOOGLE MAPS API in use here-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script type="text/javascript"
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjIbU3ukNmqzu9tJGhPLBRbQwBdzQ4ScM&libraries=geometry&sensor=false">
     </script>
     <script type="text/javascript">
-      function initialize() {
-        var mapOptions = {
-          center: new google.maps.LatLng(30.25, 97.75),
-          zoom: 0
-        };
-        var map = new google.maps.Map(document.getElementById("map-canvas"),
-            mapOptions);
-      }
-      google.maps.event.addDomListener(window, 'load', initialize);
+	var circles = [];
+	var numCircles = 0;
+	var map;
+	function initialize() {
+	  var mapOptions = {
+	      center: new google.maps.LatLng(30.25, -97.75),
+	      zoom: 2
+	  };
+	  map = new google.maps.Map(document.getElementById("map-canvas"),
+	      mapOptions);
+	  var selectionCircleOptions = {
+	      center: new google.maps.LatLng(30.25, -97.75),
+	      radius: 1000000,
+	      editable: true,
+	      map: map
+	  };
+	  circle = new google.maps.Circle(selectionCircleOptions);
+	  circles.push(circle);
+	  numCircles += 1;
+	}
+	google.maps.event.addDomListener(window, 'load', initialize);
+	function createCircle() {
+	  var selectionCircleOptions = {
+	      center: new google.maps.LatLng(30.25, -97.75),
+	      radius: 1000000,
+	      editable: true,
+	      map: map
+	  };
+	  if (numCircles < 100){
+	  	circle = new google.maps.Circle(selectionCircleOptions);
+	  	circles.push(circle);
+	  	numCircles += 1;
+	  }
+	}
+	function deleteCircle() {
+		if (numCircles > 0){
+	  	    circles.pop().setMap(null);  
+		    numCircles -= 1;
+		}
+	}	
+	    //latitude and longitude are in degrees (float) and radius is in meters.
+	function sendCoords(ev) {
+	    v.preventDefault();
+	    for (i = 0; i < circles.length; i++){
+	        $.post("insertNewQuestionCoords.php", 
+	            {lat: circles[i].getCenter().lat(),
+	            lng: circles[i].getCenter().lng(),
+	            radius: circles[i].getRadius(),
+	            question_Id: <?php echo $newQuestionId?>}
+	        );
+	    }
+	    return false;
+	}
+
+	function test() {	
+	    var circleParams = [];
+	    //latitude and longitude are in degrees (float) and radius is in meters.
+	    for (i = 0; i < circles.length; i++){
+	        circleParams.push(circles[i]);
+		}
+	    var test = document.getElementById("test");
+	    $.each(circles, function(i,param){
+	        $('<input />').attr('type', 'button')
+	            .attr('name', 'lat')
+	            .attr('value', param.getCenter().lat())
+	            .prependTo('#test');
+	        $('<input />').attr('type', 'button')
+	            .attr('name', 'lng')
+	            .attr('value', param.getCenter().lng())
+	            .prependTo('#test');
+	        $('<input />').attr('type', 'button')
+	            .attr('name', 'radius')
+	            .attr('value', param.getRadius())
+	            .prependTo('#test');
+	    });
+	    for (i = 0; i < circleParams.length; i++){
+		test.innerHTML += circleParams[i].getCenter().toString();
+	    }
+	    };
     </script>
   </head>
     <body> 
         <div id="header" class="sitename">
             <h1>
-            Poink Advertisers
+            Poink Advertisers 
             </h1>
         </div>
         <ul id="nav">
@@ -96,40 +173,63 @@ $openAuctionQuery->closeCursor();
             <h4>App: Poink</h4>
 	    <p> Your current Budget for Ads:</p>
 	    <p> 80 BAJILLION! DOLLAHS!</p>
-	        <form >
+	        <form>
 		<input type="submit" value="Add More"/></form>
         </div>
-        <div class="displayform">
+        <div class="displayform" >
 	    <h4>Submit a Question</h4>
-                <p>Question:</p>
+                <p>Advert Question:</p>
 	    <!--onsubmit can be used for javascript error checking-->
-	    <form action="" onsubmit="" method="post" enctype="multipart/form-data">
-		<textarea name="description" rows="8" columns="30"/>
-		</textarea>
-		<p>Age Range</p> 
-	        <input type="text" name="" value="0"/>
-		to
-	        <input type="text" name="" value="100"/>
-		<p>Gender</p>
-		<select name="">
-		  <option value="male">Male</option>
-		  <option value="female">Female</option>
-		  <option value="toomainstream">Gender is too mainstream</option>
-		</select>
-		<p>Bid on ad price in dollars</p>
-		  <input type="text" value=".05"/>
-	        <input type="submit"/>
-		<p>Target Region</p>
-		<div id="map-canvas"></div>
+	    <form id="submitquestion" onsubmit="return sendCoords(event);" action="insertNewQuestion.php" method="post" enctype="multipart/form-data">
+		<textarea id="questionx" name="question" rows="8" columns="30"/>
+	  	</textarea>
+	  	<p>Age Range</p> 
+	  	<input type="text" id="minagex" name="minage" value="0"/>
+	  	to
+	  	<input type="text" id="maxagex" name="maxage" value="100"/>
+	  	<p>Targeted Gender(s)</p>
+	  	<select id="genderx" name="gender">
+	  	  <option value="0">Male</option>
+	  	  <option value="1">Female</option>
+	  	  <option value="2">Both Male and Female</option>
+	  	  <option value="3">Gender is too mainstream</option>
+	  	  <option value="4">All</option>
+	  	</select>
+	  	<p>Bid on ad price in dollars</p>
+	  	  <input type="text" id="bidx" name="bid" value=".05"/>
+	  	<p>Budget for this ad, must be less than total budget minus other ad bugets</p>
+	  	  <input type="text" id="budgetx" name="budget"/>
+	  	<p>Target Regions</p>
+	  	  <input type="button" onclick="createCircle()" value="Add new target region"/>
+	  	  <input type="button" onclick="deleteCircle()" value="Delete most recent region"/>
+	  	<div id="map-canvas" style="height:30em; width:30em;"></div>
+		<input type="hidden" name="questionId" value="<?=$newQuestionId?>"/>
+		<input type="hidden" name="companyId" value="<?=$companyId?>"/>
+	  	<input type="submit"/>
 	    </form>
         </div>
-        <!--<div class="displayform">
-	    <h4>Have us create a question for you</h4>
-		<p>What goes here? Brand info or what?</p>
-        </div>-->
         <div class="displayform">
 	    <h4>Current Questions</h4>
-	    <!--later on, show the current going rate as well as the user's bid.-->
+	    <?php
+		foreach($yourQuestions as $currQuestion):
+	    ?>
+		    <p>Question:<?=htmlspecialchars($currQuestion['QUESTION'])?></p>
+		    <p>Bid:<?=htmlspecialchars($currQuestion['BID'])?></p>
+		    <p>Current Budget for this Question:<?=htmlspecialchars($currQuestion['BUDGET'])?></p>
+		    <p>Target Gender(s):<?=htmlspecialchars($currQuestion['TARGET_GENDERS'])?></p>
+		    <p>Age Range:<?=htmlspecialchars($currQuestion['MIN_AGE'])?> to <?=htmlspecialchars($currQuestion['MAX_AGE'])?></p>
+		    <p>Target Regions with highest competitive bid for each region</p>
+			MAP GOES HERE with highest bid info for each region.
+		later on, show the current going rate as well as the user's bid. will also need to allow for canceling questions.
+		should we allow for updating questions? idk may make user interface unnecessarily complex.
+		definitely need a delete button though.
+	    <?php
+		endforeach;
+	    ?>
+        </div>
+        <div id="test" class="displayform"><!-- id is just for testing.-->
+	    <h4>TEST</h4>
+		<input type="button" onclick="test()" />
         </div>
 	</br>
 	</br>

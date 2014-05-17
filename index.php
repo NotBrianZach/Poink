@@ -8,7 +8,7 @@
     <body> 
         <div id="header" class="sitename">
             <h1>
-            Welcome to Poink, the Website
+            Welcome to Poink, the Website BLAHHHHHH!??
             </h1>
         </div>
         <ul id="nav">
@@ -17,17 +17,5 @@
             <li><a href="AboutPoink.php">About Poink</a></li>
             <li><a href="HowAdsWork.php">How Ads Work</a></li>
         </ul>
-        <div id="displaytable">
-            <table>
-                <tr>
-                    <td><img src="cigarette.jpg" alt="cigarette" height="100" width="100" /></td>
-                    <td><img src="liquor.jpeg" alt="liquor" height="100" width="100" /></td>
-                </tr>
-                <tr>
-                    <td><img src="contraption.jpeg" alt="Image not found" height="100" width="100" /></td>
-                    <td><img src="watch.jpg" alt="Image not found" height="100" width="100" /></td>
-                </tr>
-            </table>
-        </div>
     </body>
 </html>

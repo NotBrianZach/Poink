@@ -31,11 +31,13 @@
 	list-style:none;
 }
 
-html, body, #map-canvas {
+/*html, body, #map-canvas {
   height: 100%;
+  width: 100%;
+  position: absolute;
   margin: 0px;
   padding: 0px
-}
+}*/
 
 #nav li {
 	float: left;
@@ -74,7 +76,7 @@ h4 {
 	background-color:#FFE4B5;
 	margin: 1em 2em 2em 5em;
 	position:static;
-	width:24em;
+	width:30em;
 	border:solid red;
 }
 .displayform p {

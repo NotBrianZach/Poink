@@ -9,31 +9,33 @@ require 'password.php';
 $newIdQuery = $database->prepare('
 	SELECT NEXT_SEQ_VALUE(:seqGenName);
 	');
-$newIdQuery->bindValue(':seqGenName', 'PERSON', PDO::PARAM_STR);
+$newIdQuery->bindValue(':seqGenName', 'COMPANIES', PDO::PARAM_STR);
 $newIdQuery->execute();
 $newId = $newIdQuery ->fetchColumn(0);
 $newIdQuery->closeCursor();
 
 $insertRegistrationStmt = $database->prepare('
-	
-        INSERT INTO PERSON
-		(PERSON_ID,NAME,EMAIL_ADDRESS,PASSWORD)
-		VALUES (:person_id, :name, :email, :password);
+        INSERT INTO COMPANIES
+		(ACCOUNT_NAME, COMPANY_ID, BILLING_ADDRESS, EMAIL, PHONE, COMPANY_NAME, PASSWORD)
+		VALUES (:accountname, :companyid, :billing, :email, :phone, :companyname, :password);
 	');
 $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 if ($password == FALSE){
 	echo "No password entered.";
 	exit(1);
 }
-$insertRegistrationStmt->bindValue(':name',$_POST['user'], PDO::PARAM_STR);
+$insertRegistrationStmt->bindValue(':accountname',$_POST['accountname'], PDO::PARAM_STR);
+$insertRegistrationStmt->bindValue(':billing',$_POST['billing'], PDO::PARAM_STR);
+$insertRegistrationStmt->bindValue(':companyname',$_POST['companyname'], PDO::PARAM_STR);
 $insertRegistrationStmt->bindValue(':email',$_POST['email'], PDO::PARAM_STR);
+$insertRegistrationStmt->bindValue(':phone',$_POST['phone'], PDO::PARAM_STR);
 $insertRegistrationStmt->bindValue(':password',$password, PDO::PARAM_STR);
-$insertRegistrationStmt->bindValue(':person_id',$newId, PDO::PARAM_INT);
+$insertRegistrationStmt->bindValue(':companyid',$newId, PDO::PARAM_INT);
 $insertRegistrationStmt->execute();
 $insertRegistrationStmt->closeCursor();
 session_start();
 session_regenerate_id(true);
-$_SESSION['user']=$_POST['user'];
+$_SESSION['user']=$_POST['accountname'];
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
@@ -45,18 +47,14 @@ $_SESSION['user']=$_POST['user'];
     <body> 
         <div class="sitename">
             <h1>
-            BuySellBuyBuy! The Confirmation Form!
+		Registration Complete.
             </h1>
         </div>
         <div id="confirmationform">
             <p>Registration Complete.</p>
             <form method="post" action="YourAccount.php">
-		<input type="submit" value="Start Sellin"/>
+		<input type="submit" value="Proceed to Poink Advertisers"/>
             </form>
         </div>
-	<div id="thekid">
-		<img src="kid.jpg" alt="Image not found"/>
-		<p>Stanley registered. Look how happy he is.</p>
-	</div>
     </body>
 </html>

@@ -1,31 +1,114 @@
 use poink;
--- auction-tables.sql -- SQL table definitions
---
--- C S 105: PHP/SQL, Spring 2014, J. Thywissen
--- The University of Texas at Austin
---
+
+/*possibly more efficient to split up into bids and questions?*/
+/*have to prevent users from getting duplicate questions...keep track of all
+question_id's they've seen and send it the server along with request for more ads
+*/
 
 CREATE TABLE QUESTIONS (
-	QUESTION_ID INTEGER PRIMARY KEY,
-	QUESTION VARCHAR(196) NOT NULL,
-	TAG VARCHAR(255),
-	COMPANY_ID INTEGER NOT NULL,
+	QUESTION_ID INTEGER unsigned PRIMARY KEY,
+	QUESTION VARCHAR(255) NOT NULL,
+	MIN_AGE INTEGER unsigned NOT NULL,
+	MAX_AGE INTEGER unsigned NOT NULL,
+	COMPANY_ID INTEGER unsigned NOT NULL,
+	BUDGET FLOAT NOT NULL,
 	BID FLOAT,
-	);
+	TARGET_GENDERS INTEGER unsigned
+	)ENGINE=InnoDB;
+
+CREATE TABLE TARGET_GENDERS (
+	TARGET_GENDERS_ID INTEGER unsigned PRIMARY KEY,
+	NAME VARCHAR(24)
+	)ENGINE=InnoDB;
+
+CREATE TABLE QUESTION_COORDS (
+	QUESTION_COORD_ID INTEGER unsigned PRIMARY KEY,
+	QUESTION_ID INTEGER unsigned,
+	LAT FLOAT NOT NULL,
+	LNG FLOAT NOT NULL,
+	RADIUS INTEGER NOT NULL
+	)ENGINE=InnoDB;
 
 CREATE TABLE COMPANIES (
-	COMPANY_ID INTEGER PRIMARY KEY,
-	BILLING_ADDRESS VARCHAR(255),
+	COMPANY_ID INTEGER unsigned PRIMARY KEY,
+	BUDGET FLOAT NULL,
+	ACCOUNT_NAME VARCHAR(100) NOT NULL,
+	BILLING_ADDRESS VARCHAR(255) NOT NULL,
 	COMPANY_NAME VARCHAR(255) NOT NULL,
 	EMAIL VARCHAR(255) NOT NULL,
-	PHONE INTEGER,
-	PASSWORD VARCHAR(255));
+	PHONE INTEGER unsigned,
+	PASSWORD VARCHAR(100)
+	) ENGINE=InnoDB;
 	/*might still need stuff like address, state, zip code for billing
 	but they don't have zip codes in Nigeria...*/
 
-CREATE TABLE
+/* more information on phone?*/
+CREATE TABLE APP_USERS (
+	USER_ID INTEGER unsigned,
+	USER_LAT FLOAT,
+	USER_LNG FLOAT,
+	GENDER INTEGER unsigned,
+	AGE INTEGER unsigned
+	) ENGINE=InnoDB;
 
+CREATE TABLE LOGIN_ATTEMPTS (
+    USER_ID INTEGER NOT NULL,
+    TIME VARCHAR(30) NOT NULL
+) ENGINE=InnoDB
+
+CREATE INDEX APP_USERS_USER_INDEX ON APP_USERS (USER_ID);
+
+CREATE INDEX COMPANIES_COMPANY_ID_INDEX ON COMPANIES (COMPANY_ID);
+
+CREATE INDEX QUESTION_COORDS_QUESTION_ID_INDEX ON QUESTION_COORDS (QUESTION_ID);
+
+CREATE INDEX QUESTION_COORDS_QUESTION_COORD_ID_INDEX ON QUESTION_COORDS (QUESTION_COORD_ID);
+
+CREATE INDEX QUESTIONS_QUESTION_ID_INDEX ON QUESTIONS (QUESTION_ID);
+
+ALTER TABLE QUESTIONS ADD FOREIGN KEY (COMPANY_ID) REFERENCES COMPANIES(COMPANY_ID); 
+
+/*might be useful in feature but right now hard to implement and not sure if I'll need it...
+would make things cleaner though..*/
+/*ALTER TABLE QUESTION_COORDS ADD FOREIGN KEY (QUESTION_ID) REFERENCES QUESTIONS(QUESTION_ID); */
+
+
+CREATE TABLE SEQ (
+    NAME VARCHAR(30) PRIMARY KEY,
+    CURRENT_VALUE INTEGER NOT NULL )ENGINE=InnoDB;
+
+
+-- The use of LAST_INSERT_ID is a MySQL-specific trick to
+-- eliminate the need for an explicit transaction here.
+
+-- From: Zaitsev, Peter. "Stored function to generate sequences". MySQL
+--   Performance Blog. Pleasanton, Calif.: Percona LLC, 2008 Apr 2.
+--   URL: http://www.mysqlperformanceblog.com/2008/04/02/stored-function-to-generate-sequences/
+
+delimiter //
+CREATE FUNCTION NEXT_SEQ_VALUE(SEQ_NAME VARCHAR(30))
+    RETURNS INT
+    MODIFIES SQL DATA
+BEGIN
+    UPDATE SEQ
+        SET
+            CURRENT_VALUE = LAST_INSERT_ID(CURRENT_VALUE+1)
+        WHERE NAME = SEQ_NAME;
+    RETURN LAST_INSERT_ID();
+END
+//
+delimiter ;
+
+
+INSERT INTO SEQ SELECT 'QUESTIONS', MAX(QUESTION_ID) FROM QUESTIONS;
+INSERT INTO SEQ SELECT 'QUESTION_COORDS', MAX(QUESTION_COORD_ID) FROM QUESTION_COORDS;
+INSERT INTO SEQ SELECT 'COMPANIES', MAX(COMPANY_ID) FROM COMPANIES;
+INSERT INTO SEQ SELECT 'APP_USERS', MAX(USER_ID) FROM APP_USERS;
+
+INSERT INTO APP_USERS VALUES (0,20.0,-40,1,25);
+INSERT INTO APP_USERS VALUES (1,50.5,40.40,0,27);
 /*poink stuff ends here*/
+/*
 CREATE TABLE AUCTION_STATUS (
 	AUCTION_STATUS_ID INTEGER PRIMARY KEY,
 	NAME VARCHAR(20) NOT NULL );
@@ -100,37 +183,4 @@ INSERT INTO ITEM_CATEGORY VALUES (10, 'Toys');
 INSERT INTO AUCTION VALUES (1, 1, 1, 5.0, '2014-02-02 15:37:00', '2014-02-05 23:00:00', 5, 'Towels', 'Slightly used towels, set of 42', NULL);
 INSERT INTO AUCTION VALUES (2, 1, 1, 5.0, '2014-02-02 17:05:00', '2014-02-05 23:00:00', 3, '"My Favourite Bathtime Gurgles" by Grunthos the Flatulent', 'Grunthos'' 12-book epic.  Not to be missed.  Was to be presented at Mid-Galactic Arts Nobbling Council, but the poet''s death prevented its presentation.', NULL);
 INSERT INTO AUCTION VALUES (3, 1, 2, 5.0, '2014-02-02 17:06:00', '2014-02-05 23:00:00', 9, 'Toasting knife', 'Bread knife that toasts the bread as you cut it.', NULL);
-
-
-CREATE TABLE SEQ (
-    NAME VARCHAR(30) PRIMARY KEY,
-    CURRENT_VALUE INTEGER NOT NULL );
-
-
--- The use of LAST_INSERT_ID is a MySQL-specific trick to
--- eliminate the need for an explicit transaction here.
-
--- From: Zaitsev, Peter. "Stored function to generate sequences". MySQL
---   Performance Blog. Pleasanton, Calif.: Percona LLC, 2008 Apr 2.
---   URL: http://www.mysqlperformanceblog.com/2008/04/02/stored-function-to-generate-sequences/
-
-delimiter //
-CREATE FUNCTION NEXT_SEQ_VALUE(SEQ_NAME VARCHAR(30))
-    RETURNS INT
-    MODIFIES SQL DATA
-BEGIN
-    UPDATE SEQ
-        SET
-            CURRENT_VALUE = LAST_INSERT_ID(CURRENT_VALUE+1)
-        WHERE NAME = SEQ_NAME;
-    RETURN LAST_INSERT_ID();
-END
-//
-delimiter ;
-
-
-INSERT INTO SEQ SELECT 'PERSON', MAX(PERSON_ID) FROM PERSON;
-INSERT INTO SEQ SELECT 'AUCTION_STATUS', MAX(AUCTION_STATUS_ID) FROM AUCTION_STATUS;
-INSERT INTO SEQ SELECT 'ITEM_CATEGORY', MAX(ITEM_CATEGORY_ID) FROM ITEM_CATEGORY;
-INSERT INTO SEQ SELECT 'AUCTION', MAX(AUCTION_ID) FROM AUCTION;
-INSERT INTO SEQ SELECT 'BID', MAX(BID_ID) FROM BID;
+*/
