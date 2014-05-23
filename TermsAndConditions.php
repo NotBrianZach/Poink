@@ -13,7 +13,7 @@
         </div>
         <div id="terms" class="loginform">
             <p>Why are you not buying already?</p>
-            <a href="Register.php">[Agree]</a>
+            <a href="register.php">[Agree]</a>
             <a href="index.php">[Disagree]</a>
         </div>
     </body>

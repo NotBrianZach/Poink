@@ -1,7 +1,12 @@
 <?php
 include_once 'psl-config.php';
  
+//function to include at top of html to make it secure
 function sec_session_start() {
+    if (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== "on") {
+        header('Location: https://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']);
+        exit(1);
+    }
     $session_name = 'sec_session_id';   // Set a custom session name
     $secure = SECURE;
     // This stops JavaScript being able to access the session id.
@@ -24,13 +29,13 @@ function sec_session_start() {
     session_regenerate_id();    // regenerated the session, delete the old one. 
 }
 
-function login($email, $password, $mysqli) {
+function login($user, $password, $mysqli) {
     // Using prepared statements means that SQL injection is not possible. 
-    if ($stmt = $mysqli->prepare("SELECT id, username, password, salt 
-        FROM members
-       WHERE email = ?
+    if ($stmt = $mysqli->prepare("SELECT COMPANY_ID, ACCOUNT_NAME, PASSWORD, SALT 
+        FROM COMPANIES
+       WHERE ACCOUNT_NAME = ?
         LIMIT 1")) {
-        $stmt->bind_param('s', $email);  // Bind "$email" to parameter.
+        $stmt->bind_param('s', $user);  // Bind "$email" to parameter.
         $stmt->execute();    // Execute the prepared query.
         $stmt->store_result();
  
@@ -43,7 +48,7 @@ function login($email, $password, $mysqli) {
         if ($stmt->num_rows == 1) {
             // If the user exists we check if the account is locked
             // from too many login attempts 
- 
+
             if (checkbrute($user_id, $mysqli) == true) {
                 // Account is locked 
                 // Send an email to user saying their account is locked
@@ -71,7 +76,7 @@ function login($email, $password, $mysqli) {
                     // Password is not correct
                     // We record this attempt in the database
                     $now = time();
-                    $mysqli->query("INSERT INTO login_attempts(user_id, time)
+                    $mysqli->query("INSERT INTO LOGIN_ATTEMPTS(USER_ID, TIME)
                                     VALUES ('$user_id', '$now')");
                     return false;
                 }
@@ -122,9 +127,9 @@ function login_check($mysqli) {
         // Get the user-agent string of the user.
         $user_browser = $_SERVER['HTTP_USER_AGENT'];
  
-        if ($stmt = $mysqli->prepare("SELECT password 
-                                      FROM members 
-                                      WHERE id = ? LIMIT 1")) {
+        if ($stmt = $mysqli->prepare("SELECT PASSWORD 
+                                      FROM COMPANIES
+                                      WHERE COMPANY_ID = ? LIMIT 1")) {
             // Bind "$user_id" to parameter. 
             $stmt->bind_param('i', $user_id);
             $stmt->execute();   // Execute the prepared query.
@@ -187,3 +192,5 @@ function esc_url($url) {
         return $url;
     }
 }
+
+?>

@@ -1,15 +1,22 @@
 <?php
-if (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== "on") {
-
-	header('HTTP/1.1 403 Forbidden: TLS Required');
-    echo "why you no use https? is you a dummy?";
-    exit(1);
-}
-require '/var/script/openZdatabase.php';
-session_start();
-session_regenerate_id(true);
-
+include_once './includes/db_connect.php';
+include_once './includes/functions.php';
+sec_session_start();
 try {
+$getBudget = $database->prepare('SELECT BUDGET FROM COMPANIES WHERE COMPANY_ID=:id');
+$getBudget->bindValue(':id',$_POST['companyId'], PDO::PARAM_INT);
+$getBudget->execute();
+$budget = $getBudget->fetchcolumn(0);
+$getBudget->closeCursor();
+
+$budget -= $_POST['budget'];
+
+$updateBudget = $database->prepare('UPDATE COMPANIES SET BUDGET=:newbudget WHERE COMPANY_ID=:id');
+$updateBudget->bindValue(':newbudget',$budget, PDO::PARAM_STR);
+$updateBudget->bindValue(':id',$_POST['companyId'], PDO::PARAM_STR);
+$updateBudget->execute();
+$updateBudget->closeCursor();
+
 $insertQuestionStmt = $database->prepare('
         INSERT INTO QUESTIONS (BID, BUDGET, QUESTION, MIN_AGE, MAX_AGE, TARGET_GENDERS, QUESTION_ID, COMPANY_ID)
 	VALUES (:bid, :budget, :question, :minage, :maxage, :gender, :questionid, :companyid);
@@ -26,8 +33,32 @@ $insertQuestionStmt->execute();
 $insertQuestionStmt->closeCursor();
 }
 catch(Exception $e) {
-    echo 'Exception -> ';
+    echo 'Exception inserting question -> ';
     var_dump($e->getMessage());
+}
+$var = $_POST['lat'];
+//THIS IS WHERE QUESTION COORDS INSERTIONS START
+for ($i=0; $i < sizeof($_POST['lat']); $i++){
+    $newQuestionCoordIdQuery = $database->prepare('
+    	SELECT NEXT_SEQ_VALUE(:seqGenName);
+    	');
+    $newQuestionCoordIdQuery->bindValue(':seqGenName', 'QUESTION_COORDS', PDO::PARAM_STR);
+    $newQuestionCoordIdQuery->execute();
+    $newQuestionCoordId = $newQuestionCoordIdQuery ->fetchColumn(0);
+    $newQuestionCoordIdQuery->closeCursor();
+
+    $insertQuestionCoordsStmt = $database->prepare('
+            INSERT INTO QUESTION_COORDS
+    		(LAT, LNG, RADIUS, QUESTION_ID, QUESTION_COORD_ID)
+    		VALUES (:lat, :lng, :radius, :questionid, :questioncoordid);
+    	');
+    $insertQuestionCoordsStmt->bindValue(':lat',$_POST['lat'][$i], PDO::PARAM_STR);
+    $insertQuestionCoordsStmt->bindValue(':lng',$_POST['lng'][$i], PDO::PARAM_STR);
+    $insertQuestionCoordsStmt->bindValue(':radius',$_POST['radius'][$i], PDO::PARAM_STR);
+    $insertQuestionCoordsStmt->bindValue(':questionid',$_POST['questionId'], PDO::PARAM_INT);
+    $insertQuestionCoordsStmt->bindValue(':questioncoordid',$newQuestionCoordId, PDO::PARAM_INT);
+    $insertQuestionCoordsStmt->execute();
+    $insertQuestionCoordsStmt->closeCursor();
 }
 ?>
 <!DOCTYPE html>

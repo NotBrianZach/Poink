@@ -4,7 +4,10 @@ include_once 'psl-config.php';
  
 $error_msg = "";
  
-if (isset($_POST['username'], $_POST['email'], $_POST['p'])) {
+if (isset($_POST['username'], $_POST['email'], $_POST['p'], $_POST['companyname'], $_POST['billing'], $_POST['phone'])) {
+    $companyname = filter_input(INPUT_POST, 'companyname', FILTER_SANITIZE_STRING);
+    $billing = filter_input(INPUT_POST, 'billing', FILTER_SANITIZE_STRING);
+    $phone = filter_input(INPUT_POST, 'phone', FILTER_SANITIZE_STRING);
     // Sanitize and validate the data passed in
     $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
     $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
@@ -24,9 +27,8 @@ if (isset($_POST['username'], $_POST['email'], $_POST['p'])) {
     // Username validity and password validity have been checked client side.
     // This should should be adequate as nobody gains any advantage from
     // breaking these rules.
-    //
  
-    $prep_stmt = "SELECT id FROM members WHERE email = ? LIMIT 1";
+    $prep_stmt = "SELECT COMPANY_ID FROM COMPANIES WHERE EMAIL = ? LIMIT 1";
     $stmt = $mysqli->prepare($prep_stmt);
  
    // check existing email  
@@ -47,7 +49,7 @@ if (isset($_POST['username'], $_POST['email'], $_POST['p'])) {
     }
  
     // check existing username
-    $prep_stmt = "SELECT id FROM members WHERE username = ? LIMIT 1";
+    $prep_stmt = "SELECT COMPANY_ID FROM COMPANIES WHERE ACCOUNT_NAME = ? LIMIT 1";
     $stmt = $mysqli->prepare($prep_stmt);
  
     if ($stmt) {
@@ -66,10 +68,6 @@ if (isset($_POST['username'], $_POST['email'], $_POST['p'])) {
                 $stmt->close();
         }
  
-    // TODO: 
-    // We'll also have to account for the situation where the user doesn't have
-    // rights to do registration, by checking what type of user is attempting to
-    // perform the operation.
  
     if (empty($error_msg)) {
         // Create a random salt
@@ -80,11 +78,19 @@ if (isset($_POST['username'], $_POST['email'], $_POST['p'])) {
         $password = hash('sha512', $password . $random_salt);
  
         // Insert the new user into the database 
+	if ($insert_stmt = $mysqli->prepare("INSERT INTO COMPANIES 
+		(ACCOUNT_NAME, EMAIL, PASSWORD, SALT, BILLING_ADDRESS,
+		PHONE, COMPANY_NAME) 
+		VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+            $insert_stmt->bind_param('sssssis', $username, $email, $password, 
+		$random_salt, $billing, $phone, $companyname);
             // Execute the prepared query.
             if (! $insert_stmt->execute()) {
+		$insert_stmt->close();
                 header('Location: ../error.php?err=Registration failure: INSERT');
             }
         }
-        header('Location: ./register_success.php');
+	$insert_stmt->close();
+        header('Location: ./Login.php');
     }
 }
