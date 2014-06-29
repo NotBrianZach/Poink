@@ -31,7 +31,6 @@ if (isset($_POST['addaccount'])) {
             }
         }
 	$update_balance->closeCursor();
-
     }
 }
 ?>

@@ -8,7 +8,7 @@
     <body> 
         <div id="header" class="sitename">
             <h1>
-            Welcome to Poink, the Website BLAHHHHHH!??
+            Welcome to Poink, the Website嗨
             </h1>
         </div>
         <ul id="nav">

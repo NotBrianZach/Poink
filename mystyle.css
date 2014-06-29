@@ -5,10 +5,10 @@
 .sitename {
 	height: 5em;
 	width: 40em;	
-	background-color: red;
+	background-color: purple;
 	margin: 2em 2em 2em 2em;
 	/*border-width:thin;*/
-	border:solid yellow;
+	border:solid black;
 	/*border-color:yellow;*/
 	padding: .5em .5em .5em .5em;
 	position:static;
@@ -81,6 +81,19 @@ h4 {
 }
 .displayform p {
 	font-size: 100%
+}
+::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 1em;
+}
+::-webkit-scrollbar-thumb {
+    border-radius: 1em;
+    background-color: rgba(0,0,0,.5);
+    -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+}
+#alreadylisted {
+	height:43em;
+	overflow-y:auto;
 }
 #confirmationform {
 	margin: 1em 1em 1em 5em;

@@ -59,9 +59,9 @@ sec_session_start();
                                    this.form.username,
                                    this.form.email,
                                    this.form.password,
-				   this.form.companyname,
-				   this.form.billing,
-				   this.form.phone,
+				                   this.form.companyname,
+				                   this.form.billing,
+				                   this.form.phone,
                                    this.form.confirmpwd);" /> 
         </form>
         <p>Return to the <a href="index.php">login page</a>.</p>

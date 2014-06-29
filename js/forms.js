@@ -80,3 +80,35 @@ function regformhash(form, uid, email, password, companyname, billing, phone, co
     form.submit();
     return true;
 }
+
+//latitude and longitude are in degrees (float) and radius is in meters.
+function appendCoords(ev, form){
+    $.each(circles, function(i,param){
+        $('<input />').attr('type', 'hidden')
+            .attr('name', 'lat[]')
+            .attr('value' , param.getCenter().lat())
+            .prependTo('form#submitquestioncoords');
+        $('<input />').attr('type', 'hidden')
+            .attr('name' , 'lng[]')
+            .attr('value', param.getCenter().lng())
+            .prependTo('form#submitquestioncoords');
+        $('<input />').attr('type', 'hidden')
+            .attr('name' , 'radius[]')
+            .attr('value', param.getRadius())
+            .prependTo('form#submitquestioncoords');
+    });
+  form.submit();
+  return true;  
+}
+
+function validateQuestionInsertOrUpdate(form, question, bid, budget, minage, maxage){
+	if (question.value == '' ||
+        bid.value == ''     || 
+        budget.value == ''  || 
+        minage.value == ''  ||
+        maxage.value == '') {
+        alert('You must provide all the requested details. Please try again');
+        return false;
+    }
+    form.submit();
+} 
