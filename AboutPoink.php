@@ -15,7 +15,7 @@ sec_session_start();
 		About Poink
             </h1>
         </div>
-<?php if( login_check($mysqli) == true): ?>
+<?php if( loginCheck($mysqli) == true): ?>
     <ul id="nav">
         <li>Welcome, <?=htmlspecialchars($_SESSION['username'])?></li>
         <li><a href="index.php">[Log out]</a></li>

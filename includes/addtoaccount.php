@@ -11,7 +11,7 @@ if (isset($_POST['addaccount'])) {
     if (empty($error_msg)) {
 	//get old account balance
 	$get_balance = $database->prepare("SELECT BUDGET FROM COMPANIES WHERE COMPANY_ID=:id");
-	$get_balance->bindValue(':id',$_POST['user_id'],PDO::PARAM_INT);
+	$get_balance->bindValue(':id',$_POST['companyId'],PDO::PARAM_INT);
 	$get_balance->execute();
 	$ifbalancenull = $get_balance->fetchColumn(0);
 	if (!is_null($ifbalancenull)){
@@ -23,7 +23,7 @@ if (isset($_POST['addaccount'])) {
 	        SET BUDGET = :addaccount
 		WHERE COMPANY_ID=:id")) {
             $update_balance->bindValue(':addaccount', $addaccount, PDO::PARAM_STR);
-	    $update_balance->bindValue(':id',$_POST['user_id'], PDO::PARAM_INT);
+	    $update_balance->bindValue(':id',$_POST['companyId'], PDO::PARAM_INT);
             // Execute the prepared query.
             if (! $update_balance->execute()) {
 		$update_balance->closeCursor();

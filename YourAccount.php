@@ -11,22 +11,25 @@
     	    BUDGET
     	FROM COMPANIES WHERE COMPANY_ID=:id;
         ');
-    $findCompanyBudget->bindValue(':id',$_SESSION['company_id']);
+    $findCompanyBudget->bindValue(':id',$_SESSION['companyId']);
     $findCompanyBudget->execute();
     $companyBudget = $findCompanyBudget->fetchColumn(0);
     $findCompanyBudget->closeCursor();
+//we stick questionId in session to check later on if we need to update page info
+//this controls the behavior of submitting question, whether it's an update or insert 
     if (!isset($_POST['questionId'])){
         $newQuestionIdQuery = $database->prepare('
         	SELECT NEXT_SEQ_VALUE(:seqGenName);
         	');
         $newQuestionIdQuery->bindValue(':seqGenName', 'QUESTIONS', PDO::PARAM_STR);
         $newQuestionIdQuery->execute();
-        $newQuestionId = $newQuestionIdQuery ->fetchColumn(0);
+        $newQuestionId = $newQuestionIdQuery->fetchColumn(0);
         $newQuestionIdQuery->closeCursor();
+        $_SESSION['questionId'] = $newQuestionId;
+        $_SESSION['updated'] = 0;
     }
     else{
-        $newQuestionId = filter_input(INPUT_POST, 'questionId', FILTER_SANITIZE_NUMBER_INT);
-        $_SESSION['questionId'] = $newQuestionId;
+        $_SESSION['updated'] = 1;
     }
     $openQuestionQuery = $database->prepare('
         SELECT
@@ -42,7 +45,7 @@
         FROM QUESTIONS Q
     	WHERE Q.COMPANY_ID = :companyId;
         ');
-    $openQuestionQuery->bindValue(':companyId', $_SESSION['company_id'], PDO::PARAM_INT);
+    $openQuestionQuery->bindValue(':companyId', $_SESSION['companyId'], PDO::PARAM_INT);
     $openQuestionQuery->execute();
     $yourQuestions = $openQuestionQuery->fetchAll(PDO::FETCH_ASSOC);
     $openQuestionQuery->closeCursor();
@@ -181,9 +184,14 @@
     <title>Your Account</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" type="text/css" href="mystyle.css"/>
-    <script language="javascript" type="text/javascript" src="datetimepicker.js">
-    </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+    <script>
+        $(function() {
+            $( "#datepicker" ).datepicker();
+        });
+    </script>
+    <script src="./js/timePicker.js"></script>
     <script type="text/javascript"
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjIbU3ukNmqzu9tJGhPLBRbQwBdzQ4ScM&libraries=geometry&sensor=false">
     </script>
@@ -194,10 +202,9 @@
 	var numCircles = 0;
 	var map;
 	var highestBids = []; //the index of the bid cooresponds to the order in which the user draws the circles.
-	var userBid = <?php echo json_encode($bid)?>;
 	var userMinAge = <?php echo json_encode($minage)?>;
 	var userMaxAge = <?php echo json_encode($maxage)?>;
-	var user = <?php echo json_encode($_SESSION['company_id'])?>;
+	var user = <?php echo json_encode($_SESSION['companyId'])?>;
 	//this is used to compute whether or not a region the user is selecting overlap with regions other advertisers
 	//chose and then later we find the highest bid out of those regions
 	function overlapExists(geoData1, geoData2){
@@ -206,17 +213,27 @@
 	    if((parseFloat(geoData1.LNG) >= 0 && parseFloat(geoData2.LNG) >= 0) 
 		|| (parseFloat(geoData1.LNG) < 0 && parseFloat(geoData2.LNG) < 0)
 		|| (Math.abs(parseFloat(geoData1.LNG)) <= 90 && Math.abs(parseFloat(geoData2.LNG)) <= 90)){
-		lngArcLength = (parseFloat(geoData1.LNG) - parseFloat(geoData2.LNG)) * Math.PI/180 * 6371009; 
+		    lngArcLength = (parseFloat(geoData1.LNG) - parseFloat(geoData2.LNG)) * Math.PI/180 * 6371009; 
 	    }
 	    else if(parseFloat(geoData1.LNG) > 90){//one must be negative, one must be positive 
-		lngArcLength = (360 - parseFloat(geoData1.LNG) + parseFloat(geoData2.LNG)) * Math.PI/180 * 6371009; 
+		    lngArcLength = (360 - parseFloat(geoData1.LNG) + parseFloat(geoData2.LNG)) * Math.PI/180 * 6371009; 
 	    }
 	    else{
-		lngArcLength = (360 - parseFloat(geoData2.LNG) + parseFloat(geoData1.LNG)) * Math.PI/180 * 6371009;
+		    lngArcLength = (360 - parseFloat(geoData2.LNG) + parseFloat(geoData1.LNG)) * Math.PI/180 * 6371009;
 	    }
-	    var circleOverlap = Math.sqrt(latArcLength * latArcLength + lngArcLength * lngArcLength) - (geoData1.RADIUS + geoData2.RADIUS);
+	    var circleOverlap = Math.sqrt(latArcLength * latArcLength + lngArcLength * lngArcLength) - (parseFloat(geoData1.RADIUS) + parseFloat(geoData2.RADIUS));
 	    if (circleOverlap <= 0){
-		return true;
+            console.log("The overlap");
+            console.log(circleOverlap);
+            console.log("Lat arc length squared:");
+            console.log(latArcLength * latArcLength);
+            console.log("Lng arc length squared:");
+            console.log(lngArcLength * lngArcLength);
+            console.log("Sqrt");
+            console.log(Math.sqrt(latArcLength * latArcLength + lngArcLength * lngArcLength));
+            console.log("Radiuses");
+            console.log(-(parseFloat(geoData1.RADIUS) + parseFloat(geoData1.RADIUS)));
+		    return true;
 	    }
 	    return false;
 	}
@@ -240,22 +257,28 @@
 	    var thisCoord = {"LAT":30.25,"LNG":-97.75,"RADIUS":1000000};
 	    for (var oneOfAll in othersCoordsAndBids){
 	        if (overlapExists(othersCoordsAndBids[oneOfAll],thisCoord)){
-	    	if (highestBids[0] < othersCoordsAndBids[oneOfAll].BID){
-	    	  highestBids[0] = othersCoordsAndBids[oneOfAll].BID;
-	    	}
+	    	    if (highestBids[0] < othersCoordsAndBids[oneOfAll].BID){
+	    	        highestBids[0] = othersCoordsAndBids[oneOfAll].BID;
+	    	    }
 	        }
 	    }
 	    $('<p id="latlngOfBid' + numCircles + '"> Lat:30.25 Lng:-97.75</p>' )
 	        .appendTo('#highestBidsInTarget');
-	    $('<p id="bidForTarget' + numCircles + '"> Bid:' + highestBids[0] + '</p>' )
+	    $('<p id="bidForTarget' + numCircles + '"> Others Highest Bid: ' + highestBids[0] + '</p>' )
 	        .appendTo('#highestBidsInTarget');
+        $('<p> Your Bid: <input type="text" id="bidx' + numCircles + '" name="bid[]" value=".05"/> </p>')
+            .appendTo('#highestBidsInTarget');
+	  	$('<p> Budget: <input type="text" id="budgetx' + numCircles + '" name="questionBudget[]" value=".05"/></p>')
+            .appendTo('#highestBidsInTarget');
+        $('<p> End Date: <input type="text" id="datepickerx' + numCircles + '"></p>')//want to add time functionality as well.
+            .appendTo('#highestBidsInTarget');
 	    var localNumCircles = numCircles;
 	    google.maps.event.addListener(circles[localNumCircles], 'radius_changed', function(){
 	  		$('#latlngOfBid'.concat(localNumCircles)).text('Lat:' + circles[localNumCircles].getCenter().lat().toFixed(3) 
 	  		        + ' Lng:' + circles[localNumCircles].getCenter().lng().toFixed(3));
 	        var thisCoord = {"LAT":circles[localNumCircles].getCenter().lat(),"LNG":circles[localNumCircles].getCenter().lng(),"RADIUS":circles[localNumCircles].getRadius()};
 	        highestBids[localNumCircles] = .05;
-            //othersCoordsAndBids[0].BID;//not sure if most computationally efficient method...
+	  	    $('#bidForTarget' + localNumCircles).html('Highest Bid in region:' + highestBids[localNumCircles]);
 	        for (var oneOfAll in othersCoordsAndBids){
 	            if (overlapExists(othersCoordsAndBids[oneOfAll],thisCoord)){
 	          		if (highestBids[localNumCircles] < othersCoordsAndBids[oneOfAll].BID){
@@ -270,6 +293,7 @@
 	  	             + ' Lng:' + circles[localNumCircles].getCenter().lng().toFixed(3));
 	         var thisCoord= {"LAT":circles[localNumCircles].getCenter().lat(),"LNG":circles[localNumCircles].getCenter().lng(),"RADIUS":circles[localNumCircles].getRadius()};
 	         highestBids[localNumCircles] = .05;
+	  	     $('#bidForTarget' + localNumCircles).html('Highest Bid in region:' + highestBids[localNumCircles]);
 	         for (var oneOfAll in othersCoordsAndBids){
 	             if (overlapExists(othersCoordsAndBids[oneOfAll],thisCoord)){
 	           		if (highestBids[localNumCircles] < othersCoordsAndBids[oneOfAll].BID){
@@ -282,7 +306,6 @@
 	    numCircles += 1;
 	}
 	google.maps.event.addDomListener(window, 'load', initialize);
-	console.log(othersCoordsAndBids);
 	function createCircle() {
 	    var selectionCircleOptions = {
 	        center: new google.maps.LatLng(30.25, -97.75),
@@ -302,6 +325,7 @@
 	        google.maps.event.addListener(circles[localNumCircles1], 'radius_changed', function(){
 	            var thisCoord = {"LAT":circles[localNumCircles1].getCenter().lat(),"LNG":circles[localNumCircles1].getCenter().lng(),"RADIUS":circles[localNumCircles1].getRadius()};
 	            highestBids[localNumCircles1] = .05;
+	            $('#bidForTarget' + localNumCircles1).html('Highest Bid in region:' + highestBids[localNumCircles1]);
 	            $('#latlngOfBid' + localNumCircles1).html('Lat:' + circles[localNumCircles1].getCenter().lat().toFixed(3) 
 	                + ' Lng:' + circles[localNumCircles1].getCenter().lng().toFixed(3));
 	            for (var oneOfAll in othersCoordsAndBids){
@@ -316,6 +340,7 @@
 	        google.maps.event.addListener(circles[localNumCircles1], 'center_changed', function(){
 	    	      var thisCoord= {"LAT":circles[localNumCircles1].getCenter().lat(),"LNG":circles[localNumCircles1].getCenter().lng(),"RADIUS":circles[localNumCircles1].getRadius()};
 	              highestBids[localNumCircles1] = .05;
+	              $('#bidForTarget' + localNumCircles1).html('Highest Bid in region:' + highestBids[localNumCircles1]);
 	  	    	  $('#latlngOfBid' + localNumCircles1).html('Lat:' + circles[localNumCircles1].getCenter().lat().toFixed(3)
 	  	    	     + ' Lng:' + circles[localNumCircles1].getCenter().lng().toFixed(3));
 	    	      for (var oneOfAll in othersCoordsAndBids){
@@ -332,7 +357,6 @@
 	}
 	function deleteCircle() {
 		if (numCircles >= 0){
-		    console.log(circles);
 		    deletedCircle = circles.pop();
 	            $('#latlngOfBid' + numCircles).remove(); 
 	            $('#bidForTarget' + numCircles).remove(); 
@@ -385,7 +409,7 @@
 		Your Account
             </h1>
         </div>
-    <?php if( login_check($mysqli) == true): ?>
+    <?php if( loginCheck($mysqli) == true): ?>
         <ul id="nav">
 	    <li>Welcome, <?=htmlspecialchars($_SESSION['username'])?></li>
             <li><a href="./includes/logout.php">[Log out]</a></li>
@@ -398,7 +422,7 @@
 	    <p> $<?=htmlspecialchars($companyBudget)?></p>
 	    <form method="post" action="<?php echo esc_url($_SERVER['PHP_SELF']); ?>" enctype="multipart/form-data">
 		<input type="text" name="addaccount"/>
-		<input type="hidden" name="user_id" value=<?php echo $_SESSION['user_id']?>/>
+		<input type="hidden" name="companyId" value=<?php echo $_SESSION['companyId']?>/>
 		<input type="submit" value="Modify account balance by amount"/>
 		<p>To subtract, include a negative sign at the front, to add, type in any number, using a period before values less than a dollar.</p>
 	    </form>
@@ -419,32 +443,29 @@
 	  	  <option value="1">Male</option>
 	  	  <option value="2">Female</option>
 	  	</select>
-		<script type="text/javascript"> document.getElementById("genderx").selectedIndex=<?=$gender?>;</script>
-	  	<p>Bid on ad price in dollars</p>
-	  	  <input type="text" id="bidx" name="bid" value="<?=$bid?>"/>
-	  	<p>Budget for this ad, must be less than total budget minus other ad bugets</p>
-	  	  <input type="text" id="budgetx" name="questionBudget" value="<?=$questionBudget?>"/>
+    <script type="text/javascript"> document.getElementById("genderx").selectedIndex=<?=$gender?>;</script>
 		<input type="hidden" name="companyBudget" value="<?=$companyBudget?>"/>
-		<input type="hidden" name="questionId" value="<?=$newQuestionId?>"/>
-		<input type="hidden" name="companyId" value="<?=$_SESSION['user_id']?>"/>
+		<input type="hidden" name="questionId" value="<?=$_SESSION['questionId']?>"/>
+		<input type="hidden" name="companyId" value="<?=$_SESSION['companyId']?>"/>
 		</br>
 		<p>Target Demographic info will be used when selecting target regions to display competing bids</p>
         <input type="button" value="Submit First Half of Ad" onclick="return validateQuestionInsertOrUpdate(this.form,
-           document.getElementById('questionx').value, document.getElementById('minagex'), document.getElementById('maxagex'),
-           document.getElementById('gender').value, document.getElementById('bidx').value, document.GetElementById('budgetx');"/>
+           document.getElementById('questionx').value, document.getElementById('minagex').value, document.getElementById('maxagex').value,
+           document.getElementById('bidx').value, document.getElementById('budgetx').value);"/>
 	    </form>
-	    <br/>
+	    </br>
 	  <h4>Select Target Regions</h4>
 	  	  <input type="button" onclick="createCircle()" value="Add new target region"/>
 	  	  <input type="button" onclick="deleteCircle()" value="Delete most recent region"/>
 	    <form id="submitquestioncoords"  action="insertNewQuestion.php?identifier=Target%20Regions" method="post" enctype="multipart/form-data">
 	  	<div id="map-canvas" style="height:30em; width:30em;"></div>
-		<p>Highest Current Bid in Target Regions for Your Selected Demographics</p>
+		<p>Bid on Target Regions for Your Selected Demographics</p>
 		<div id="highestBidsInTarget">
 		</div>
-		<input type="hidden" name="questionId" value="<?=$newQuestionId?>"/>
-		<input type="hidden" name="companyId" value="<?=$_SESSION['user_id']?>"/>
-        <input type="button" value="Submit Full Ad to Database" onclick="return appendCoords(event, this.form);"/><!-- somehow we have to determine if the question has been submitted.-->
+		<input type="hidden" name="questionId" value="<?=$_SESSION['questionId']?>"/>
+		<input type="hidden" name="companyBudget" value="<?=$companyBudget?>"/>
+		<input type="hidden" name="companyId" value="<?=$_SESSION['companyId']?>"/>
+        <input type="button" value="Submit Full Ad to Database" onclick="return appendCoords(event, this.form);"/>
         <p>Submit coords only if you are satisfied with everything!</p>
 	    </form>
         </div>
@@ -464,17 +485,17 @@
 	  	        <div id=<?=htmlspecialchars("map-canvas-currentAd".$currQuestion['QUESTION_ID'])?> style="height:20em; width:20em;"></div>
 			<p>Highest Bids</p> 
 		    <?php  
-			 foreach($coords[$currQuestion['QUESTION_ID']] as $currCoords):
+			    foreach($coords[$currQuestion['QUESTION_ID']] as $currCoords):
 		    ?>
             <p>Lat, Lng: <?=htmlspecialchars($currCoords['LAT'])?>, <?=htmlspecialchars($currCoords['LNG'])?>
                  Highest Bid: <?=htmlspecialchars($highestBids[$currCoords['QUESTION_COORD_ID']])?></p>
 		    <?php
-			endforeach;
+			    endforeach;
 		    ?> 
 		    <?php  
-			 $id=0;
-			 foreach($coords[$currQuestion['QUESTION_ID']] as $currCoords):
-					?>
+			    $id=0;
+			    foreach($coords[$currQuestion['QUESTION_ID']] as $currCoords):
+			?>
 		        <input type="hidden" id="<?=htmlspecialchars("lat".$currQuestion['QUESTION_ID'].$id)?>"
 			 value="<?=htmlspecialchars($coords[$currQuestion['QUESTION_ID']][$id]['LAT'])?>"/>
 	  	        <input type="hidden" id="<?=htmlspecialchars("lng".$currQuestion['QUESTION_ID'].$id)?>"
@@ -482,7 +503,7 @@
 	  	        <input type="hidden" id="<?=htmlspecialchars("radius".$currQuestion['QUESTION_ID'].$id)?>"
 			 value="<?=htmlspecialchars($coords[$currQuestion['QUESTION_ID']][$id]['RADIUS'])?>"/>
 		    <?php       $id+=1;
-			endforeach;
+			    endforeach;
 		    ?> 
 		<form method="post" action="<?php echo esc_url($_SERVER['PHP_SELF']);?>" enctype="multipart/form-data">
 		    <input type="hidden" value=<?=$currQuestion['COMPANY_ID']?> name="companyid"/>
@@ -492,15 +513,15 @@
 		    <input type="submit" value="Remove this ad"/>
 		</form>
 	    <?php
-		endif;
-		endforeach;
+		    endif;
+		    endforeach;
 	    ?>
         </div>
         <div class="displayform" id="alreadylisted">
 	    <h4>Past Ads</h4>
 	    <?php
-		foreach($yourQuestions as $currQuestion):
-		    if (ord($currQuestion['DELETED']) > 0)://ord converts from string to ascii value.
+		    foreach($yourQuestions as $currQuestion):
+		        if (ord($currQuestion['DELETED']) > 0)://ord converts from string to ascii value.
 	    ?>
 		<form method="post" action="<?php echo esc_url($_SERVER['PHP_SELF']);?>" enctype="multipart/form-data">
 		    <p>Question: <?=htmlspecialchars($currQuestion['QUESTION'])?></p>
@@ -512,8 +533,8 @@
 		    <input type="submit" value="Delete this from the database"/>
 		</form>
 	    <?php
-		endif;
-		endforeach;
+		    endif;
+		    endforeach;
 	    ?>
         </div>
         <script src="./js/forms.js" type="text/javascript"></script>

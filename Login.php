@@ -4,7 +4,7 @@ include_once './includes/functions.php';
  
 sec_session_start();
  
-if (login_check($mysqli) == true) {
+if (loginCheck($mysqli) == true) {
     $logged = 'in';
 } else {
     $logged = 'out';
@@ -23,7 +23,7 @@ if (login_check($mysqli) == true) {
     <body> 
         <div id="header" class="sitename">
             <h1>
-		Login
+         		Login
             </h1>
         </div>
         <?php

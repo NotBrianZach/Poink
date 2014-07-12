@@ -8,7 +8,7 @@
     <body> 
         <div id="header" class="sitename">
             <h1>
-            Welcome to Poink, the Website嗨
+            Welcome to Poink, the Website¤@¤G¤T
             </h1>
         </div>
         <ul id="nav">
@@ -18,4 +18,7 @@
             <li><a href="HowAdsWork.php">How Ads Work</a></li>
         </ul>
     </body>
-</html>
+</html
+
+
+

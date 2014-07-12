@@ -101,14 +101,44 @@ function appendCoords(ev, form){
   return true;  
 }
 
-function validateQuestionInsertOrUpdate(form, question, bid, budget, minage, maxage){
-	if (question.value == '' ||
-        bid.value == ''     || 
-        budget.value == ''  || 
-        minage.value == ''  ||
-        maxage.value == '') {
+function validateQuestionInsertOrUpdate(form, question, minage, maxage, bid, budget){
+    //need form validation, one at a time..
+        console.log(bid);
+	if (question == ''){
         alert('You must provide all the requested details. Please try again');
+        form.question.focus();
+        return false;
+    }
+    if (bid == ''){
+        alert('You must provide all the requested details. Please try again');
+        form.bid.focus();
+        return false;
+    }
+    if (isNaN(bid)){
+        alert('Bid must be a number');
+        form.bid.focus();
+        return false;
+    }
+    if (budget == ''){
+        alert('You must provide all the requested details. Please try again');
+        form.budget.focus();
+        return false;
+    }
+    if (isNaN(budget)){
+        alert('Budget must be a number');
+        form.budget.focus();
+        return false;
+    }
+    if (minage == '' || maxage == ''){
+        alert('You must provide all the requested details. Please try again');
+        form.minage.focus();
+        return false;
+    }
+    if (isNaN(minage) || isNaN(maxage)){
+        alert('Age ranges must both be numbers');
+        form.minage.focus();
         return false;
     }
     form.submit();
+    return true;
 } 
