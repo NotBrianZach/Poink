@@ -1,5 +1,4 @@
 <?php
-include_once './includes/register.inc.php';
 include_once './includes/functions.php';
 sec_session_start();
 ?>
@@ -39,10 +38,9 @@ sec_session_start();
             </li>
             <li>Your password and confirmation must match exactly</li>
         </ul>
-        <form action="<?php echo esc_url($_SERVER['PHP_SELF']); ?>"
+        <form action="accountConfirmationSender.php"
                 method="post" 
                 name="registration_form">
-            Poink Account name:<br/> <input type="text" name="username" id="username"/><br/>
             Email: <br/> <input type="text" name="email" id="email" /><br/>
             Password: <br/> <input type="password"
                              name="password" 
@@ -52,11 +50,10 @@ sec_session_start();
                                      id="confirmpwd" /><br/>
             Company name: <br/> <input type="text" name="companyname" id="companyname"/><br/>
             Billing Address: <br/> <textarea name="billing" id="billing" rows="4" cols="20"></textarea><br/>
-            Phone: <br/> <input type="text" name="phone" id="phone"/><br/>
+            Phone: <br/> <input type="text" name="phone" id="phone"/> Ex. 123-456-7891<br/>
             <input type="button" 
                    value="Register" 
                    onclick="return regformhash(this.form,
-                                   this.form.username,
                                    this.form.email,
                                    this.form.password,
 				                   this.form.companyname,
@@ -64,7 +61,7 @@ sec_session_start();
 				                   this.form.phone,
                                    this.form.confirmpwd);" /> 
         </form>
-        <p>Return to the <a href="index.php">login page</a>.</p>
+        <p>Return to the <a href="index.php">Home page</a>.</p>
     </div>
     </body>
 </html>

@@ -8,17 +8,16 @@
     <body> 
         <div id="header" class="sitename">
             <h1>
-            Welcome to Poink, the Website¤@¤G¤T
+            Welcome to the Website你好
             </h1>
         </div>
         <ul id="nav">
             <li><a href="Login.php">Login</a></li>
             <li><a href="TermsAndConditions.php">Register</a></li>
-            <li><a href="AboutPoink.php">About Poink</a></li>
-            <li><a href="HowAdsWork.php">How Ads Work</a></li>
+            <li><a href="Obfuscate2.php">Obfuscate2</a></li>
         </ul>
     </body>
-</html
+</html>
 
 
 

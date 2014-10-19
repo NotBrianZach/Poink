@@ -6,21 +6,21 @@ sec_session_start();
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
   <head>
-    <title>How Ads Work</title>
+    <title>Obfuscate2</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" type="text/css" href="mystyle.css"/>
   </head>
         <div id="header" class="sitename">
             <h1>
-		How Ads Work
+		Obfuscate2
             </h1>
         </div>
 
 <?php if( loginCheck($mysqli) == true): ?>
     <ul id="nav">
-        <li>Welcome, <?=htmlspecialchars($_SESSION['username'])?></li>
+        <li>Welcome, <?=htmlspecialchars($_SESSION['email'])?></li>
         <li><a href="index.php">[Log out]</a></li>
-        <li><a href="AboutPoink.php">[About Poink]</a></li>
+        <li><a href="Obfuscate1.php">[About Poink]</a></li>
         <li><a href="YourAccount.php">[Your Account]</a></li>
     </ul>
 <?php else: ?>
@@ -28,7 +28,7 @@ sec_session_start();
         <li><a href="index.php">[Welcome Page]</a></li>
         <li><a href="Login.php">[Login]</a></li>
         <li><a href="register.php">[Register]</a></li>
-        <li><a href="AboutPoink.php">[About Poink]</a></li>
+        <li><a href="Obfuscate1.php">[About Poink]</a></li>
     </ul>
 <?php endif;?>
     <div class="displayform">

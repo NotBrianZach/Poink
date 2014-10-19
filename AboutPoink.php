@@ -17,9 +17,9 @@ sec_session_start();
         </div>
 <?php if( loginCheck($mysqli) == true): ?>
     <ul id="nav">
-        <li>Welcome, <?=htmlspecialchars($_SESSION['username'])?></li>
+        <li>Welcome, <?=htmlspecialchars($_SESSION['email'])?></li>
         <li><a href="index.php">[Log out]</a></li>
-        <li><a href="HowAdsWork.php">[How Ads Work]</a></li>
+        <li><a href="Obfuscate2.php">[Obfuscate2]</a></li>
         <li><a href="YourAccount.php">[Your Account]</a></li>
     </ul>
 <?php else: ?>
@@ -27,7 +27,7 @@ sec_session_start();
         <li><a href="index.php">[Welcome Page]</a></li>
         <li><a href="Login.php">[Login]</a></li>
         <li><a href="register.php">[Register]</a></li>
-        <li><a href="HowAdsWork.php">[How Ads Work]</a></li>
+        <li><a href="Obfuscate2.php">[Obfuscate2]</a></li>
     </ul>
 <?php endif;?>
 

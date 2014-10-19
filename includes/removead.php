@@ -4,8 +4,9 @@ include_once 'psl-config.php';
 
 if (isset($_POST['removedquestionid'])) {
     $removedQuestionId = filter_input(INPUT_POST, 'removedquestionid', FILTER_SANITIZE_NUMBER_INT);
-    $companyId = filter_input(INPUT_POST, 'companyid', FILTER_SANITIZE_NUMBER_INT);
+//    $companyId = filter_input(INPUT_POST, 'companyid', FILTER_SANITIZE_NUMBER_INT);
     $budget = filter_input(INPUT_POST, 'budget', FILTER_SANITIZE_NUMBER_FLOAT);
+    $companyId = $_SESSION['companyId'];
 
     $get_balance = $database->prepare("SELECT BUDGET FROM COMPANIES WHERE COMPANY_ID=:id");
 	$get_balance->bindValue(':id',$companyId,PDO::PARAM_INT);

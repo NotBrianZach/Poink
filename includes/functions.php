@@ -29,18 +29,18 @@ function sec_session_start() {
     session_regenerate_id();    // regenerated the session, delete the old one. 
 }
 
-function login($user, $password, $mysqli) {
+function login($email, $password, $mysqli) {
     // Using prepared statements means that SQL injection is not possible. 
-    if ($stmt = $mysqli->prepare("SELECT COMPANY_ID, ACCOUNT_NAME, PASSWORD, SALT 
+    if ($stmt = $mysqli->prepare("SELECT COMPANY_ID, EMAIL, PASSWORD, SALT 
         FROM COMPANIES
-       WHERE ACCOUNT_NAME = ?
+       WHERE EMAIL = ?
         LIMIT 1")) {
-        $stmt->bind_param('s', $user);  // Bind "$email" to parameter.
+        $stmt->bind_param('s', $email);  // Bind "$email" to parameter.
         $stmt->execute();    // Execute the prepared query.
         $stmt->store_result();
  
         // get variables from result.
-        $stmt->bind_result($companyId, $username, $db_password, $salt);
+        $stmt->bind_result($companyId, $email, $db_password, $salt);
         $stmt->fetch();
  
         // hash the password with the unique salt.
@@ -48,10 +48,22 @@ function login($user, $password, $mysqli) {
         if ($stmt->num_rows == 1) {
             // If the user exists we check if the account is locked
             // from too many login attempts 
-
             if (checkbrute($companyId, $mysqli) == true) {
                 // Account is locked 
+                // accomplish by invalidating and generating a new validation code
+                $invalidate = $database->prepare(' UPDATE COMPANIES SET VALIDATED = 0, VALIDATION_CODE = :validationCode WHERE COMPANY_ID = :companyId');
+                $invalidate->bindValue(':companyId', $companyId, PDO::PARAM_INT);
+                $invalidate->bindValue(':validationCode', hash('sha512', uniqid(mt_rand(1, mt_getrandmax()), true)) , PDO::PARAM_STR);
+                //hopefully this hash is not more than 128 characters
+                $invalidate->execute();
+                $invalidate->closeCursor();
                 // Send an email to user saying their account is locked
+                $to = $email;
+                $validationURL = "https://72.182.40.185/accountConfirmationReceiver.php?validationCode="; //to be replaced with www.poink.org or something similar.
+                $subject = "Poink Account Locked: Re-validation link";
+                $body = "Click on this link to confirm you are not a robot and re-activate your account: " . $validationURL . $validationCode;
+                sendMail($to, $subject, $body);
+                echo 'Too many password entry attempts. Check your email for a link to confirm you are not \n a robot trying to brute force someone\'s  account.';
                 return false;
             } else {
                 // Check if the password in the database matches
@@ -64,10 +76,10 @@ function login($user, $password, $mysqli) {
                     $companyId = preg_replace("/[^0-9]+/", "", $companyId);
                     $_SESSION['companyId'] = $companyId;
                     // XSS protection as we might print this value
-                    $username = preg_replace("/[^a-zA-Z0-9_\-]+/", 
-                                                                "", 
-                                                                $username);
-                    $_SESSION['username'] = $username;
+                    //$username = preg_replace("/[^a-zA-Z0-9_\-]+/", 
+                    //                                            "", 
+                    //                                            $username);
+                    $_SESSION['email'] = $email;
                     $_SESSION['login_string'] = hash('sha512', 
                               $password . $user_browser);
                     // Login successful.
@@ -76,7 +88,7 @@ function login($user, $password, $mysqli) {
                     // Password is not correct
                     // We record this attempt in the database
                     $now = time();
-                    $mysqli->query("INSERT INTO LOGIN_ATTEMPTS(companyId, TIME)
+                    $mysqli->query("INSERT INTO LOGIN_ATTEMPTS(COMPANY_ID, TIME)
                                     VALUES ('$companyId', '$now')");
                     return false;
                 }
@@ -117,12 +129,12 @@ function checkbrute($companyId, $mysqli) {
 function loginCheck($mysqli) {
     // Check if all session variables are set 
     if (isset($_SESSION['companyId'], 
-                        $_SESSION['username'], 
+                        $_SESSION['email'], 
                         $_SESSION['login_string'])) {
  
         $companyId = $_SESSION['companyId'];
         $login_string = $_SESSION['login_string'];
-        $username = $_SESSION['username'];
+        $email = $_SESSION['email'];
  
         // Get the user-agent string of the user.
         $user_browser = $_SERVER['HTTP_USER_AGENT'];
@@ -192,5 +204,4 @@ function esc_url($url) {
         return $url;
     }
 }
-
 ?>

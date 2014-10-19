@@ -2,6 +2,9 @@
 /*the #confirmationform and #thekid are the two adjacent floated elements*/
 /*the change button occurs insise of the display form, and h1 within sitenames are treated specially*/
 
+/*hack to make datepicker box dissapear, since there is no element on the page to bind to initially it glitches out*/
+#ui-datepicker-div {display: none;}
+
 .sitename {
 	height: 5em;
 	width: 40em;	
@@ -22,16 +25,13 @@
 #nav {
 	width: 100%
 	margin: 2em 1em 1em 3em;
-	border-width:thin;
-	border-bottom: .1px solid #ccc;
-	border-top: 1px solid #ccc;
-	background-color: #f2f2f2;
 	padding: 2em 1em 1em 3em;
 	position:static;
 	list-style:none;
 }
 
 /*html, body, #map-canvas {
+p
   height: 100%;
   width: 100%;
   position: absolute;
@@ -48,18 +48,6 @@
 	font-weight: bold;
 	border-right: 1px solid #ccc;
 }
-
-#nav li a:hover{
-	color: #c00;
-	background-color: #fff;
-}
-
-.selectedpage  {
-	color:blue;
-	text-decoration:underline;
-}
-
-button.link { background:none; }
 
 #displaytable {
 	margin: 3em 3em 3em 3em;
@@ -78,6 +66,7 @@ h4 {
 	position:static;
 	width:30em;
 	border:solid red;
+    float:left;
 }
 .displayform p {
 	font-size: 100%
@@ -113,10 +102,6 @@ div.longDescription {
 	width: 21em;
 	margin: 1em 2em 2em 5em;
 	border:solid black;
-}
-
-#thekid {
-	float:left;
 }
 
 /* css for timepicker */

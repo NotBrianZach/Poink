@@ -1,7 +1,6 @@
 <?php
 include_once './includes/db_connect.php';
 include_once './includes/functions.php';
- 
 sec_session_start();
  
 if (loginCheck($mysqli) == true) {
@@ -13,7 +12,7 @@ if (loginCheck($mysqli) == true) {
 
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-<head>
+<head> 
     <title>Login</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" type="text/css" href="mystyle.css"/>
@@ -28,12 +27,12 @@ if (loginCheck($mysqli) == true) {
         </div>
         <?php
         if (isset($_GET['error'])) {
-            echo '<p class="error">Error Logging In!</p>';
+            echo '<p class="error">Error logging in. Check your email and password.</p>';
         }
         ?> 
         <div class="loginform">
             <form method="post" action="./includes/process_login.php" name="login_form">
-                <p>Account Name:</p> <input type="text" name="user"/>
+                <p>Email:</p> <input type="text" name="email"/>
                 <p>Password:</p> <input type="password" name="password" id="password"/>
 		<br/>
                 <input type="button" 
@@ -41,9 +40,13 @@ if (loginCheck($mysqli) == true) {
                    onclick="formhash(this.form, this.form.password);" /> 
 		<br/>
             </form>
-        </form>
         <p>If you don't have a login, please <a href="register.php">register</a></p>
-        <p>If you are done, please <a href="includes/logout.php">log out</a>.</p>
+		<br/>
+        <p>Can't remember your password, or didn't get an account confirmation email? 
+            <form method="post" action="./includes/passwordResetEmail.php" name="password_reset_form">
+                 Enter your Email: <input type="text" name="email"/>
+                <input type="submit" value="Reset Password"/> 
+            </form></p>
         <p>You are currently logged <?php echo $logged ?>.</p>
         </div>
     </body>
