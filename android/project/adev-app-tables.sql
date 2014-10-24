@@ -1,5 +1,5 @@
 use locationData;
-
+/*yeah so there's still some cleaning up to do in this file :P*/
 /* more information on phone?*/
 CREATE TABLE if not exists APP_USERS (
 	USER_ID INTEGER unsigned PRIMARY KEY,
