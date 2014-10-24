@@ -34,7 +34,7 @@ create table if not exists user_profile(
 --   URL: http://www.mysqlperformanceblog.com/2008/04/02/stored-function-to-generate-sequences/
 
 delimiter //
-CREATE if not exists FUNCTION NEXT_SEQ_VALUE(SEQ_NAME VARCHAR(30))
+CREATE FUNCTION NEXT_SEQ_VALUE(SEQ_NAME VARCHAR(30))
     RETURNS INT
     MODIFIES SQL DATA
 BEGIN
